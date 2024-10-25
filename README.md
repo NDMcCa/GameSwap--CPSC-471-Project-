@@ -5,8 +5,6 @@
 ![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-<br />
-
 ### Development `.env` file:
 ```ini
 DATABASE_HOST=localhost
@@ -17,5 +15,23 @@ DATABASE_NAME=gameswap_db
 This goes in the root project directory.
 
 ### Working with containers:
- - Run `docker-compose up -d`. This will start all the containers specified in the `docker-compose.yml` file.
- - When your done with the container, run `docker-compose down` to shut it down.
+
+#### Initial startup:
+Run `docker-compose up --build` to build the container(s) from scratch.
+
+#### Continue from cached state:
+Run `docker-compose up -d` to continue from the last saved state of the container
+
+#### Shutdown container(s) and save state:
+Run `docker-compose down`
+
+#### Shutdown container(s) and clear saved state:
+Run `docker-compose down -v`
+
+#### Procedure to hard reset the container(s):
+Run:
+```bash
+docker-compose down -v
+docker-compose up --build
+```
+Do this if the schema has been modified so the sql scripts located in `schema` are re-executed.
