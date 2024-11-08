@@ -1,3 +1,4 @@
+import { fail } from "assert";
 import mysql from "mysql2/promise";
 
 const credentials: mysql.PoolOptions = {
@@ -17,7 +18,7 @@ const testConnection = async () => {
     console.log("Database connection successful");
     connection.release();
   } catch (error) {
-    console.error("Database connection failed:", error);
+    fail(`Database connection failed: ${error}`);
   }
 };
 
