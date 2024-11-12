@@ -1,22 +1,22 @@
 import pool from "$lib/db";
-import type { BuyerDdl } from "$lib/ddl/BuyerDdl";
-import type { ModeratorDdl } from "$lib/ddl/ModeratorDdl";
-import type { SellerDdl } from "$lib/ddl/SellerDdl";
+import type { BuyerModel } from "$lib/models/BuyerModel";
+import type { ModeratorModel } from "$lib/models/ModeratorModel";
+import type { SellerModel } from "$lib/models/SellerModel";
 
 type UserVariants = "MODERATOR" | "SELLER" | "BUYER";
 
-const authenticateUser = async <DdlType>(
+const authenticateUser = async <UserType>(
   userVariant: UserVariants,
   usernameOrEmail: string,
   password: string
-): Promise<DdlType | undefined> => {
+): Promise<UserType | undefined> => {
   try {
     const result = await pool.query(
       "SELECT * FROM ?? WHERE username = ? OR email = ? AND password_hash = ?",
       [userVariant, usernameOrEmail, usernameOrEmail, password]
     );
 
-    const users = result[0] as DdlType[];
+    const users = result[0] as UserType[];
 
     if (users.length === 0) {
       return undefined;
@@ -31,20 +31,24 @@ const authenticateUser = async <DdlType>(
 export const authenticateModerator = async (
   usernameOrEmail: string,
   password: string
-): Promise<ModeratorDdl | undefined> => {
-  return authenticateUser<ModeratorDdl>("MODERATOR", usernameOrEmail, password);
+): Promise<ModeratorModel | undefined> => {
+  return authenticateUser<ModeratorModel>(
+    "MODERATOR",
+    usernameOrEmail,
+    password
+  );
 };
 
 export const authenticateSeller = async (
   usernameOrEmail: string,
   password: string
-): Promise<SellerDdl | undefined> => {
-  return authenticateUser<SellerDdl>("SELLER", usernameOrEmail, password);
+): Promise<SellerModel | undefined> => {
+  return authenticateUser<SellerModel>("SELLER", usernameOrEmail, password);
 };
 
 export const authenticateBuyer = async (
   usernameOrEmail: string,
   password: string
-): Promise<BuyerDdl | undefined> => {
-  return authenticateUser<BuyerDdl>("BUYER", usernameOrEmail, password);
+): Promise<BuyerModel | undefined> => {
+  return authenticateUser<BuyerModel>("BUYER", usernameOrEmail, password);
 };

@@ -1,4 +1,4 @@
-export interface BuyerDdl {
+export interface BuyerModel {
   buyer_id: number;
   password_hash: string;
   email: string;

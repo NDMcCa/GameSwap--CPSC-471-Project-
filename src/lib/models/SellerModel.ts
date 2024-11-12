@@ -1,4 +1,4 @@
-export interface SellerDdl {
+export interface SellerModel {
   seller_id: number;
   password_hash: string;
   email: string;
