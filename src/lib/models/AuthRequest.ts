@@ -1,5 +1,5 @@
 export interface AuthRequest {
-  usernameOrEmail: string;
-  password: string;
+  usernameOrEmail?: string;
+  password?: string;
   token?: string;
 }

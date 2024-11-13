@@ -1,8 +1,6 @@
-import type { BuyerModel } from "./BuyerModel";
-import type { ModeratorModel } from "./ModeratorModel";
-import type { SellerModel } from "./SellerModel";
+import type { TokenContent } from "$lib/jwt";
 
 export interface AuthResponse {
-  user: ModeratorModel | BuyerModel | SellerModel;
-  token: string;
+  tokenContent: TokenContent;
+  serializedToken: string;
 }

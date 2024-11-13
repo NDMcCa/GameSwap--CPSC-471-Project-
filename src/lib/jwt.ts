@@ -1,9 +1,18 @@
 import jwt from "jsonwebtoken";
+import type { ModeratorModel } from "./models/ModeratorModel";
+import type { BuyerModel } from "./models/BuyerModel";
+import type { SellerModel } from "./models/SellerModel";
+import type { UserVariant } from "./controllers/userController";
 
 const jwtSecret = process.env.JWT_SECRET ?? "sample-secret";
 const jwtExpiration = "12h";
 
-export const generateToken = <PayloadType>(payload: PayloadType): string => {
+export interface TokenContent {
+  user: ModeratorModel | BuyerModel | SellerModel;
+  variant: UserVariant;
+}
+
+export const generateToken = (payload: any): string => {
   const serializedPayload = JSON.stringify(payload);
   return jwt.sign(serializedPayload, jwtSecret, {
     expiresIn: jwtExpiration,

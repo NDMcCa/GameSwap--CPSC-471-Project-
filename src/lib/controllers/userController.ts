@@ -3,10 +3,14 @@ import type { BuyerModel } from "$lib/models/BuyerModel";
 import type { ModeratorModel } from "$lib/models/ModeratorModel";
 import type { SellerModel } from "$lib/models/SellerModel";
 
-type UserVariants = "MODERATOR" | "SELLER" | "BUYER";
+export enum UserVariant {
+  MODERATOR = "MODERATOR",
+  SELLER = "SELLER",
+  BUYER = "BUYER",
+}
 
 const authenticateUser = async <UserType>(
-  userVariant: UserVariants,
+  userVariant: UserVariant,
   usernameOrEmail: string,
   password: string
 ): Promise<UserType | undefined> => {
@@ -33,7 +37,7 @@ export const authenticateModerator = async (
   password: string
 ): Promise<ModeratorModel | undefined> => {
   return authenticateUser<ModeratorModel>(
-    "MODERATOR",
+    UserVariant.MODERATOR,
     usernameOrEmail,
     password
   );
@@ -43,12 +47,20 @@ export const authenticateSeller = async (
   usernameOrEmail: string,
   password: string
 ): Promise<SellerModel | undefined> => {
-  return authenticateUser<SellerModel>("SELLER", usernameOrEmail, password);
+  return authenticateUser<SellerModel>(
+    UserVariant.SELLER,
+    usernameOrEmail,
+    password
+  );
 };
 
 export const authenticateBuyer = async (
   usernameOrEmail: string,
   password: string
 ): Promise<BuyerModel | undefined> => {
-  return authenticateUser<BuyerModel>("BUYER", usernameOrEmail, password);
+  return authenticateUser<BuyerModel>(
+    UserVariant.BUYER,
+    usernameOrEmail,
+    password
+  );
 };
