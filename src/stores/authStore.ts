@@ -10,3 +10,11 @@ export const setTokenContent = (content: TokenContent) => {
 export const clearTokenContent = () => {
   authTokenContent.set(undefined);
 };
+
+export const saveJwt = (token: string) => {
+  localStorage.setItem("token", token);
+};
+
+export const deleteJwt = () => {
+  localStorage.removeItem("token");
+};
