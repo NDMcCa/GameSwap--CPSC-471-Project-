@@ -1,16 +1,32 @@
 <script lang="ts">
-  import type { IndexPageData } from "./+page";
+  import "../app.scss";
 
-  export let data: IndexPageData;
+  import {
+    authTokenContent,
+    clearTokenContent,
+    deleteJwt,
+  } from "../stores/authStore";
+  import { goto } from "$app/navigation";
+
+  const logout = () => {
+    deleteJwt();
+    clearTokenContent();
+  };
 </script>
 
 <main>
-  <h1>Test Table Rows</h1>
-  {#each data.rows as row}
-    <div>
-      <h2>{row.id}</h2>
-      <p>{row.age}</p>
-      <p>{row.name}</p>
+  {#if !$authTokenContent}
+    <!-- The user is not logged in -->
+    <h1>GameSwap</h1>
+    <div class="button-container">
+      <button on:click={() => goto("/login")}>Login</button>
+      <button on:click={() => goto("/register")}>Register</button>
     </div>
-  {/each}
+  {:else}
+    <!-- The user is logged in -->
+    <button on:click={logout}>Logout</button>
+    <p>
+      Welcome, {$authTokenContent.user.username} as a {$authTokenContent.variant}!
+    </p>
+  {/if}
 </main>

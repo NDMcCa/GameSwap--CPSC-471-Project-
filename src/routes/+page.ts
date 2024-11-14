@@ -1,32 +1,44 @@
-import type { TestTableSchema } from "$lib/schemas/TestTableSchema";
+import type { AuthRequest } from "$lib/models/AuthRequest";
+import type { AuthResponse } from "$lib/models/AuthResponse";
+import {
+  clearTokenContent,
+  deleteJwt,
+  saveJwt,
+  setTokenContent,
+} from "../stores/authStore";
+import { authTokenContent } from "../stores/authStore";
 
-export const ssr = true;
-export const csr = false;
+export const ssr = false;
+export const csr = true;
 
-export interface IndexPageData {
-  rows: TestTableSchema[];
-}
+export const load = async ({ fetch }) => {
+  // Check for token
+  const token = localStorage.getItem("token") as string | undefined;
 
-export const load = async ({ fetch }): Promise<IndexPageData> => {
-  // Fetch test rows
-  const testRows = await fetch("/api/get-test-rows");
-  const testRowsData = (await testRows.json()) as TestTableSchema[];
+  if (token) {
+    const req: AuthRequest = { token };
 
-  // Insert a test row
-  const newTestRow: TestTableSchema = {
-    age: 25,
-    name: "John Doe",
-  };
+    const res = await fetch("/api/login/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req),
+    });
 
-  await fetch("/api/post-test-row", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newTestRow),
-  });
+    if (res.ok) {
+      try {
+        const data: AuthResponse = await res.json();
 
-  return {
-    rows: testRowsData,
-  };
+        setTokenContent(data.tokenContent);
+        saveJwt(data.serializedToken);
+
+        return;
+      } catch (_) {}
+    }
+  }
+
+  // No token found or token was invalid or an error occurred
+  clearTokenContent();
+  deleteJwt();
 };

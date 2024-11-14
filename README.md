@@ -13,6 +13,7 @@ DATABASE_HOST=localhost
 DATABASE_USER=user
 DATABASE_PASSWORD=userpassword
 DATABASE_NAME=gameswap_db
+JWT_SECRET=secret
 ```
 
 This goes in the root project directory.
