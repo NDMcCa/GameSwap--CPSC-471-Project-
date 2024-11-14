@@ -36,7 +36,7 @@ const authenticateUser = async (
     }
 
     return users[0];
-  } catch (error) {
+  } catch (_) {
     return undefined;
   }
 };

@@ -4,9 +4,10 @@
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import { setTokenStore, tokenStore } from "../stores/tokenStore";
-  import type { TokenContent } from "$lib/jwt";
+  import { listingsStore, setListingsStore } from "../stores/listingsStore";
 
-  setTokenStore($page.data.token as TokenContent | undefined);
+  setTokenStore($page.data.token);
+  setListingsStore($page.data.listings);
 
   const logout = async () => {
     await fetch("/api/logout", {
@@ -15,6 +16,8 @@
 
     setTokenStore(undefined);
   };
+
+  let searchBy: "seller" | "game" = "game";
 </script>
 
 <main>
@@ -32,15 +35,59 @@
       {/if}
     </div>
   </div>
+  <div class="search-container">
+    <select bind:value={searchBy}>
+      <option value="seller">Seller</option>
+      <option value="game">Game</option>
+    </select>
+    <input type="text" placeholder={`Search by ${searchBy}...`} />
+    <button>Search</button>
+  </div>
+  <div class="listings-container">
+    {#if $listingsStore.length > 0}
+      {#each $listingsStore as listing}
+        <div class="listing">
+          <h2>{listing.title}</h2>
+          <p>{listing.username}</p>
+          <p>{listing.price}</p>
+        </div>
+      {/each}
+    {:else}
+      <p>No listings found.</p>
+    {/if}
+  </div>
 </main>
 
 <style lang="scss">
+  div.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ebebeb;
+    padding: 0.7rem;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 1000;
+
+    select {
+      margin-right: 1rem;
+    }
+
+    input {
+      flex: 1;
+      margin-right: 1rem;
+    }
+
+    button {
+      margin-right: 1rem;
+    }
+  }
+
   div.top-bar {
-    position: fixed;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f0f0f0;
+    background-color: #d3d3d3;
     padding: 0.7rem;
     width: 100%;
     box-sizing: border-box;

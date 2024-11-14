@@ -1,5 +1,5 @@
-import { fail } from "assert";
 import mysql from "mysql2/promise";
+import { fail } from "assert";
 
 const credentials: mysql.PoolOptions = {
   host: process.env.DATABASE_HOST,
