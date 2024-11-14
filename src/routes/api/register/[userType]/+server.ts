@@ -5,12 +5,17 @@ import {
   type UserType,
 } from "$lib/controllers/userController";
 import { emailRegex } from "$lib/regex";
-import { generateToken, jwtCookieHeader, type TokenContent } from "$lib/jwt";
+import {
+  generateToken,
+  jwtCookieAge,
+  jwtCookieName,
+  type TokenContent,
+} from "$lib/jwt";
 import type { RegisterRequest } from "$lib/models/RegisterRequest";
 import type { RequestHandler } from "@sveltejs/kit";
 import type { AuthResponse } from "$lib/models/AuthResponse";
 
-export const POST: RequestHandler = async ({ request, params }) => {
+export const POST: RequestHandler = async ({ request, params, cookies }) => {
   const { username, password, email, city } =
     (await request.json()) as RegisterRequest;
 
@@ -72,10 +77,10 @@ export const POST: RequestHandler = async ({ request, params }) => {
     serializedToken: newToken,
   };
 
-  return new Response(JSON.stringify(res), {
-    status: 200,
-    headers: {
-      "Set-Cookie": jwtCookieHeader(newToken),
-    },
+  cookies.set(jwtCookieName, newToken, {
+    path: "/",
+    maxAge: jwtCookieAge,
   });
+
+  return new Response(JSON.stringify(res), { status: 200 });
 };

@@ -7,7 +7,8 @@ import {
 } from "$lib/controllers/userController";
 import {
   generateToken,
-  jwtCookieHeader,
+  jwtCookieAge,
+  jwtCookieName,
   verifyToken,
   type TokenContent,
 } from "$lib/jwt";
@@ -15,7 +16,7 @@ import type { AuthRequest } from "$lib/models/AuthRequest";
 import type { AuthResponse } from "$lib/models/AuthResponse";
 import type { RequestHandler } from "@sveltejs/kit";
 
-export const POST: RequestHandler = async ({ request, params }) => {
+export const POST: RequestHandler = async ({ request, params, cookies }) => {
   const { usernameOrEmail, password, token } =
     (await request.json()) as AuthRequest;
 
@@ -84,10 +85,10 @@ export const POST: RequestHandler = async ({ request, params }) => {
     serializedToken: newToken,
   };
 
-  return new Response(JSON.stringify(res), {
-    status: 200,
-    headers: {
-      "Set-Cookie": jwtCookieHeader(newToken),
-    },
+  cookies.set(jwtCookieName, newToken, {
+    path: "/",
+    maxAge: jwtCookieAge,
   });
+
+  return new Response(JSON.stringify(res), { status: 200 });
 };
