@@ -2,11 +2,15 @@ import {
   authenticateBuyer,
   authenticateModerator,
   authenticateSeller,
-  hashPassword,
   UserVariant,
   type UserType,
 } from "$lib/controllers/userController";
-import { generateToken, verifyToken, type TokenContent } from "$lib/jwt";
+import {
+  generateToken,
+  jwtCookieHeader,
+  verifyToken,
+  type TokenContent,
+} from "$lib/jwt";
 import type { AuthRequest } from "$lib/models/AuthRequest";
 import type { AuthResponse } from "$lib/models/AuthResponse";
 import type { RequestHandler } from "@sveltejs/kit";
@@ -42,17 +46,15 @@ export const POST: RequestHandler = async ({ request, params }) => {
   let user: UserType | undefined;
   let userType: UserVariant;
 
-  const passwordHash = await hashPassword(password);
-
   if (params.userType == "moderator") {
     userType = UserVariant.MODERATOR;
-    user = await authenticateModerator(usernameOrEmail, passwordHash);
+    user = await authenticateModerator(usernameOrEmail, password);
   } else if (params.userType == "buyer") {
     userType = UserVariant.BUYER;
-    user = await authenticateBuyer(usernameOrEmail, passwordHash);
+    user = await authenticateBuyer(usernameOrEmail, password);
   } else if (params.userType == "seller") {
     userType = UserVariant.SELLER;
-    user = await authenticateSeller(usernameOrEmail, passwordHash);
+    user = await authenticateSeller(usernameOrEmail, password);
   } else {
     return new Response(
       JSON.stringify({
@@ -82,5 +84,10 @@ export const POST: RequestHandler = async ({ request, params }) => {
     serializedToken: newToken,
   };
 
-  return new Response(JSON.stringify(res), { status: 200 });
+  return new Response(JSON.stringify(res), {
+    status: 200,
+    headers: {
+      "Set-Cookie": jwtCookieHeader(newToken),
+    },
+  });
 };

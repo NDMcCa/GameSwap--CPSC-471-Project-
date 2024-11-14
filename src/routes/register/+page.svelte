@@ -4,8 +4,6 @@
   import { goto } from "$app/navigation";
   import { emailRegex } from "$lib/regex";
   import type { RegisterRequest } from "$lib/models/RegisterRequest";
-  import type { AuthResponse } from "$lib/models/AuthResponse";
-  import { saveJwt, setTokenContent } from "../../stores/authStore";
 
   let username = "";
   let password = "";
@@ -54,12 +52,7 @@
 
     // Check if the registration was successful
     if (res.ok) {
-      const data = (await res.json()) as AuthResponse;
-
-      setTokenContent(data.tokenContent);
-      saveJwt(data.serializedToken);
-
-      goto("/");
+      goto("/discover");
     } else {
       const error = await res.json();
       errorMessage = error.message || "Registration failed.";

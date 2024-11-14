@@ -12,24 +12,26 @@ export enum UserVariant {
 
 export type UserType = ModeratorModel | BuyerModel | SellerModel;
 
-export const hashPassword = async (password: string): Promise<string> => {
-  return bcrypt.hash(password, 10);
-};
-
-const authenticateUser = async <UserType>(
+const authenticateUser = async (
   userVariant: UserVariant,
   usernameOrEmail: string,
-  passwordHash: string
+  plaintextPassword: string
 ): Promise<UserType | undefined> => {
   try {
     const result = await pool.query(
-      "SELECT * FROM ?? WHERE username = ? OR email = ? AND password_hash = ?",
-      [UserVariant[userVariant], usernameOrEmail, usernameOrEmail, passwordHash]
+      "SELECT * FROM ?? WHERE username = ? OR email = ?",
+      [UserVariant[userVariant], usernameOrEmail, usernameOrEmail]
     );
 
     const users = result[0] as UserType[];
 
     if (users.length === 0) {
+      return undefined;
+    }
+
+    const user = users[0];
+
+    if (!(await bcrypt.compare(plaintextPassword, user.password_hash))) {
       return undefined;
     }
 
@@ -41,45 +43,47 @@ const authenticateUser = async <UserType>(
 
 export const authenticateModerator = async (
   usernameOrEmail: string,
-  passwordHash: string
+  plaintextPassword: string
 ): Promise<ModeratorModel | undefined> => {
-  return authenticateUser<ModeratorModel>(
+  return authenticateUser(
     UserVariant.MODERATOR,
     usernameOrEmail,
-    passwordHash
-  );
+    plaintextPassword
+  ) as Promise<ModeratorModel | undefined>;
 };
 
 export const authenticateSeller = async (
   usernameOrEmail: string,
-  passwordHash: string
+  plaintextPassword: string
 ): Promise<SellerModel | undefined> => {
-  return authenticateUser<SellerModel>(
+  return authenticateUser(
     UserVariant.SELLER,
     usernameOrEmail,
-    passwordHash
-  );
+    plaintextPassword
+  ) as Promise<SellerModel | undefined>;
 };
 
 export const authenticateBuyer = async (
   usernameOrEmail: string,
-  passwordHash: string
+  plaintextPassword: string
 ): Promise<BuyerModel | undefined> => {
-  return authenticateUser<BuyerModel>(
+  return authenticateUser(
     UserVariant.BUYER,
     usernameOrEmail,
-    passwordHash
-  );
+    plaintextPassword
+  ) as Promise<BuyerModel | undefined>;
 };
 
 const insertUser = async (
   username: string,
   email: string,
-  passwordHash: string,
+  plaintextPassword: string,
   city: string,
   userType: "BUYER" | "SELLER"
 ): Promise<BuyerModel | SellerModel | undefined> => {
   try {
+    const passwordHash = bcrypt.hashSync(plaintextPassword, 10);
+
     const result = await pool.query(
       "INSERT INTO ?? (username, email, password_hash, city) VALUES (?, ?, ?, ?)",
       [userType, username, email, passwordHash, city]
@@ -90,7 +94,7 @@ const insertUser = async (
     if (userType === "SELLER") {
       return {
         seller_id: userId,
-        password_hash: passwordHash,
+        password_hash: plaintextPassword,
         username,
         email,
         city,
@@ -99,7 +103,7 @@ const insertUser = async (
     } else if (userType === "BUYER") {
       return {
         buyer_id: userId,
-        password_hash: passwordHash,
+        password_hash: plaintextPassword,
         username,
         email,
         city,

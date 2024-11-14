@@ -1,14 +1,13 @@
 import {
-  hashPassword,
   insertBuyer,
   insertSeller,
   UserVariant,
   type UserType,
 } from "$lib/controllers/userController";
 import { emailRegex } from "$lib/regex";
+import { generateToken, jwtCookieHeader, type TokenContent } from "$lib/jwt";
 import type { RegisterRequest } from "$lib/models/RegisterRequest";
 import type { RequestHandler } from "@sveltejs/kit";
-import { generateToken, type TokenContent } from "$lib/jwt";
 import type { AuthResponse } from "$lib/models/AuthResponse";
 
 export const POST: RequestHandler = async ({ request, params }) => {
@@ -38,14 +37,12 @@ export const POST: RequestHandler = async ({ request, params }) => {
   let user: UserType | undefined;
   let userType: UserVariant;
 
-  const passwordHash = await hashPassword(password);
-
   if (params.userType == "buyer") {
     userType = UserVariant.BUYER;
-    user = await insertBuyer(username, email, passwordHash, city);
+    user = await insertBuyer(username, email, password, city);
   } else if (params.userType == "seller") {
     userType = UserVariant.SELLER;
-    user = await insertSeller(username, email, passwordHash, city);
+    user = await insertSeller(username, email, password, city);
   } else {
     return new Response(
       JSON.stringify({
@@ -75,5 +72,10 @@ export const POST: RequestHandler = async ({ request, params }) => {
     serializedToken: newToken,
   };
 
-  return new Response(JSON.stringify(res), { status: 200 });
+  return new Response(JSON.stringify(res), {
+    status: 200,
+    headers: {
+      "Set-Cookie": jwtCookieHeader(newToken),
+    },
+  });
 };

@@ -4,8 +4,13 @@ import type { BuyerModel } from "./models/BuyerModel";
 import type { SellerModel } from "./models/SellerModel";
 import type { UserVariant } from "./controllers/userController";
 
+export const jwtCookieAge = 60 * 60;
+export const jwtCookieName = "token";
+export const jwtCookieHeader = (token: string) =>
+  `${jwtCookieName}=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${jwtCookieAge};`;
+
 const jwtSecret = process.env.JWT_SECRET ?? "sample-secret";
-const jwtExpiration = Math.floor(Date.now() / 1000) + 60 * 60;
+const jwtExpiration = Math.floor(Date.now() / 1000) + jwtCookieAge;
 
 export interface TokenContent {
   user: ModeratorModel | BuyerModel | SellerModel;

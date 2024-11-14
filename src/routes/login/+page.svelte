@@ -1,8 +1,8 @@
 <script lang="ts">
+  import "../../app.scss";
+
   import { goto } from "$app/navigation";
-  import { saveJwt, setTokenContent } from "../../stores/authStore";
   import type { AuthRequest } from "$lib/models/AuthRequest";
-  import type { AuthResponse } from "$lib/models/AuthResponse";
 
   let usernameOrEmail = "";
   let userType = "buyer";
@@ -33,12 +33,7 @@
 
     // Check if the registration was successful
     if (res.ok) {
-      const data = (await res.json()) as AuthResponse;
-
-      setTokenContent(data.tokenContent);
-      saveJwt(data.serializedToken);
-
-      goto("/");
+      goto("/discover");
     } else {
       const error = await res.json();
       errorMessage = error.message || "Login failed.";
