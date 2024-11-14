@@ -1,46 +1,65 @@
 import pool from "$lib/db";
-import type { GameListingModel } from "$lib/models/GameListingModel";
-import type { SellerModel } from "$lib/models/SellerModel";
+import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
+import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
+import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
 
-export const getAllGameListings = async (): Promise<
-  (GameListingModel & SellerModel)[] | undefined
+export const getGameListings = async (
+  category: string | undefined,
+  platform: string | undefined,
+  title: string | undefined,
+  seller: string | undefined
+): Promise<JoinedGameListingModel[] | undefined> => {
+  try {
+    let query =
+      "SELECT * FROM GAME_LISTING JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name";
+
+    if (category || platform || title || seller) {
+      query += " WHERE";
+
+      if (category) {
+        query += ` category_name LIKE '${category}'`;
+      }
+
+      if (platform) {
+        query += ` platform_name LIKE '${platform}'`;
+      }
+
+      if (title) {
+        query += ` game LIKE '${title}'`;
+      }
+
+      if (seller) {
+        query += ` username LIKE '${seller}'`;
+      }
+    }
+
+    const result = await pool.query(query);
+
+    return result[0] as JoinedGameListingModel[];
+  } catch (_) {
+    return undefined;
+  }
+};
+
+export const getGameListingCategories = async (): Promise<
+  GameCategoryModel[] | undefined
 > => {
   try {
-    const result = await pool.query(
-      "SELECT * FROM GAME_LISTING JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id"
-    );
+    const result = await pool.query("SELECT * FROM GAME_CATEGORY");
 
-    return result[0] as (GameListingModel & SellerModel)[];
+    return result[0] as GameCategoryModel[];
   } catch (_) {
     return undefined;
   }
 };
 
-export const getGameListingsByTitle = async (
-  gameTitle: string
-): Promise<(GameListingModel & SellerModel)[] | undefined> => {
+export const getGameListingPlatforms = async (): Promise<
+  GamePlatformModel[] | undefined
+> => {
   try {
-    const result = await pool.query(
-      "SELECT * FROM GAME_LISTING JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id WHERE game LIKE ?",
-      [gameTitle]
-    );
+    const result = await pool.query("SELECT * FROM GAME_PLATFORM");
 
-    return result[0] as (GameListingModel & SellerModel)[];
-  } catch (_) {
-    return undefined;
-  }
-};
-
-export const getGameListingsBySellerUsername = async (
-  sellerUsername: string
-): Promise<(GameListingModel & SellerModel)[] | undefined> => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM GAME_LISTING JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id WHERE username LIKE ?",
-      [sellerUsername]
-    );
-
-    return result[0] as (GameListingModel & SellerModel)[];
+    return result[0] as GamePlatformModel[];
   } catch (_) {
     return undefined;
   }

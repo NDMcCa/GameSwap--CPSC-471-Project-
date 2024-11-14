@@ -1,12 +1,8 @@
 import { writable } from "svelte/store";
-import type { GameListingModel } from "$lib/models/GameListingModel";
-import type { SellerModel } from "$lib/models/SellerModel";
+import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
 
-// This will store game listings joined with seller information
-export const listingsStore = writable<(GameListingModel & SellerModel)[]>([]);
+export const listingsStore = writable<JoinedGameListingModel[]>([]);
 
-export const setListingsStore = (
-  listings: (GameListingModel & SellerModel)[]
-) => {
+export const setListingsStore = (listings: JoinedGameListingModel[]) => {
   listingsStore.set(listings);
 };

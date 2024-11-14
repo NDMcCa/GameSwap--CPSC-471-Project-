@@ -1,3 +1,7 @@
+import type { GameCategoryModel } from "./GameCategoryModel";
+import type { GamePlatformModel } from "./GamePlatformModel";
+import type { SellerModel } from "./SellerModel";
+
 export interface GameListingModel {
   listing_id: number;
   description: string;
@@ -7,3 +11,8 @@ export interface GameListingModel {
   platform: string;
   category: string;
 }
+
+export type JoinedGameListingModel = GameListingModel &
+  SellerModel &
+  GamePlatformModel &
+  GameCategoryModel;
