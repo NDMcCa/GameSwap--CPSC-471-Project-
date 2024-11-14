@@ -1,7 +1,8 @@
-import { redirect, type ServerLoad } from "@sveltejs/kit";
+import { type ServerLoad } from "@sveltejs/kit";
+import { type TokenContent, verifyToken } from "$lib/jwt";
 
 export const load: ServerLoad = async ({ cookies }) => {
-  if (cookies.get("token")) {
-    throw redirect(303, "/discover");
-  }
+  const token = verifyToken<TokenContent>(cookies.get("token") ?? "");
+
+  return { token };
 };

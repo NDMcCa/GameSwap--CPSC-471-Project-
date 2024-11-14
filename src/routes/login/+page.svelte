@@ -33,7 +33,7 @@
 
     // Check if the registration was successful
     if (res.ok) {
-      goto("/discover");
+      goto("/");
     } else {
       const error = await res.json();
       errorMessage = error.message || "Login failed.";
