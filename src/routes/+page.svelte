@@ -1,9 +1,9 @@
 <script lang="ts">
   import "../app.scss";
+  import Nav from "$lib/nav.svelte";
 
   import { page } from "$app/stores";
-  import { goto } from "$app/navigation";
-  import { setTokenStore, tokenStore } from "../stores/tokenStore";
+  import { setTokenStore } from "../stores/tokenStore";
   import { listingsStore, setListingsStore } from "../stores/listingsStore";
   import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
   import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
@@ -14,37 +14,13 @@
   const categories = $page.data.categories as GameCategoryModel[];
   const platforms = $page.data.platforms as GamePlatformModel[];
 
-  const logout = async () => {
-    await fetch("/api/logout", {
-      method: "POST",
-    });
-
-    setTokenStore(undefined);
-  };
-
   let searchBy: "seller" | "game" = "game";
   let searchCategory: string = "";
   let searchPlatform: string = "";
 </script>
 
-<main>
-  <div class="top-bar">
-    <div class="title-container">
-      <h1 style="font-family: Impact, sans-serif; color: black">Game</h1>
-      <h1 style="font-family: Impact, sans-serif; color: teal">Swap</h1>
-    </div>  
-    <div class="user-container">
-      {#if $tokenStore}
-        <div>
-          {$tokenStore.user.username} ({$tokenStore.variant.toLocaleLowerCase()})
-        </div>
-        <button on:click={logout}>Logout</button>
-      {:else}
-        <button on:click={() => goto("/login")}>Login</button>
-        <button on:click={() => goto("/register")}>Register</button>
-      {/if}
-    </div>
-  </div>
+<main>  
+  <Nav />
   <div class="search-container">
     <select bind:value={searchBy}>
       <option value="seller">Seller</option>
@@ -72,6 +48,8 @@
     {#if $listingsStore.length > 0}
       {#each $listingsStore as listing}
         <div class="listing">
+          <!-- We may want to implement images for listings here if we have time -->
+          <!-- <img src={listing.image} alt={listing.title} /> -->
           <h2>{listing.title}</h2>
           <p>{listing.username}</p>
           <p>{listing.price}</p>
@@ -105,26 +83,6 @@
 
     button {
       margin-right: 1rem;
-    }
-  }
-
-  div.top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #d3d3d3;
-    padding: 0.7rem;
-    width: 100%;
-    box-sizing: border-box;
-    z-index: 1000;
-
-    div.user-container {
-      display: flex;
-      align-items: center;
-
-      button {
-        margin-left: 1rem;
-      }
     }
   }
 </style>
