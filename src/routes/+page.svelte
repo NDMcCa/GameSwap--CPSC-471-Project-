@@ -29,7 +29,10 @@
 
 <main>
   <div class="top-bar">
-    <h1>GameSwap</h1>
+    <div class="title-container">
+      <h1 style="font-family: Impact, sans-serif; color: black">Game</h1>
+      <h1 style="font-family: Impact, sans-serif; color: teal">Swap</h1>
+    </div>  
     <div class="user-container">
       {#if $tokenStore}
         <div>

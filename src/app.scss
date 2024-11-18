@@ -5,6 +5,12 @@ main {
   margin: 0;
 }
 
+div.title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
