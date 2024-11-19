@@ -85,4 +85,21 @@
       margin-right: 1rem;
     }
   }
+
+  :global(body) {
+		transition: background-color 0.3s
+	}
+	:global(body.dark-mode) {
+		background-color: #272727;
+		color: white;
+	}
+
+  :global(body) div.search-container{
+		transition: background-color 0.3s
+	}
+	:global(body.dark-mode) div.search-container{
+		background-color: #1b1b1b;
+		color: white;
+	}
+
 </style>

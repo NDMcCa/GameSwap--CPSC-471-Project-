@@ -11,11 +11,15 @@
 
     setTokenStore(undefined);
   };
+
+  function toggle() {
+    window.document.body.classList.toggle("dark-mode");
+  }
 </script>
 
 <div class="top-bar">
   <button on:click={() => goto("/")} class="title-container">
-    <h1 style="font-family: Impact, sans-serif; color: black">Game</h1>
+    <h1 class="crap" style="font-family: Impact, sans-serif;">Game</h1>
     <h1 style="font-family: Impact, sans-serif; color: teal">Swap</h1>
   </button>
   <div class="user-container">
@@ -28,6 +32,7 @@
       <button on:click={() => goto("/login")}>Login</button>
       <button on:click={() => goto("/register")}>Register</button>
     {/if}
+      <button on:click={toggle}>Mode</button>
   </div>
 </div>
 
@@ -61,5 +66,24 @@
     background: transparent;
     font: inherit;
     cursor: pointer;
+
+    h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+  }
+
+  :global(body.dark-mode) h1.crap {
+    color: white;
+  }
+
+  :global(body) div.top-bar {
+    transition: background-color 0.3s;
+  }
+
+  :global(body.dark-mode) div.top-bar {
+    background-color: #0f0f0f;
+    color: white;
+    transition: background-color 0.3s;
   }
 </style>
