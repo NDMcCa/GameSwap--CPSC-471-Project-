@@ -81,13 +81,8 @@
     color: white;
   }
 
-  :global(body) div.top-bar {
-    transition: background-color 0.3s;
-  }
-
   :global(body.dark-mode) div.top-bar {
     background-color: #0f0f0f;
     color: white;
-    transition: background-color 0.3s;
   }
 </style>
