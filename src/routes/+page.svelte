@@ -42,7 +42,7 @@
       type="text"
       placeholder={`Search by ${searchBy}${searchCategory.length > 0 ? ` in ${searchCategory}` : ""}${searchPlatform.length > 0 ? ` for ${searchPlatform}` : ""}...`}
     />
-    <button>Search</button>
+    <button class="search">Search</button>
   </div>
   <div class="listings-container">
     {#if $listingsStore.length > 0}
@@ -83,23 +83,27 @@
 
     button {
       margin-right: 1rem;
+
+      &.search {
+        margin-right: 0;
+      }
     }
   }
 
   :global(body) {
-		transition: background-color 0.3s
-	}
-	:global(body.dark-mode) {
-		background-color: #272727;
-		color: white;
-	}
+    transition: background-color 0.3s;
+  }
+  :global(body.dark-mode) {
+    background-color: #272727;
+    color: white;
+  }
 
-  :global(body) div.search-container{
-		transition: background-color 0.3s
-	}
-	:global(body.dark-mode) div.search-container{
-		background-color: #1b1b1b;
-		color: white;
-	}
+  :global(body) div.search-container {
+    transition: background-color 0.3s;
+  }
 
+  :global(body.dark-mode) div.search-container {
+    background-color: #1b1b1b;
+    color: white;
+  }
 </style>
