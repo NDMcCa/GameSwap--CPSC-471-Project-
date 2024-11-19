@@ -1,14 +1,9 @@
 import pool from "$lib/db";
 import bcrypt from "bcrypt";
+import { UserVariant } from "$lib/models/UserVariant";
 import type { BuyerModel } from "$lib/models/BuyerModel";
 import type { ModeratorModel } from "$lib/models/ModeratorModel";
 import type { SellerModel } from "$lib/models/SellerModel";
-
-export enum UserVariant {
-  MODERATOR = "MODERATOR",
-  SELLER = "SELLER",
-  BUYER = "BUYER",
-}
 
 export type UserType = ModeratorModel | BuyerModel | SellerModel;
 

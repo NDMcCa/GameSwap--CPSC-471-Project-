@@ -3,6 +3,7 @@
 
   import { goto } from "$app/navigation";
   import { setTokenStore, tokenStore } from "../../stores/tokenStore";
+  import { UserVariant } from "$lib/models/UserVariant";
 
   const logout = async () => {
     await fetch("/api/logout", {
@@ -27,12 +28,15 @@
       <div>
         {$tokenStore.user.username} ({$tokenStore.variant.toLocaleLowerCase()})
       </div>
+      {#if $tokenStore.variant == UserVariant.SELLER}
+        <button on:click={() => goto("/create-listing")}>Create Listing</button>
+      {/if}
       <button on:click={logout}>Logout</button>
     {:else}
       <button on:click={() => goto("/login")}>Login</button>
       <button on:click={() => goto("/register")}>Register</button>
     {/if}
-      <button on:click={toggle}>Mode</button>
+    <button on:click={toggle}>Mode</button>
   </div>
 </div>
 
