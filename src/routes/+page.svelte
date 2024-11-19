@@ -1,6 +1,6 @@
 <script lang="ts">
   import "../app.scss";
-  import Nav from "$lib/nav.svelte";
+  import Nav from "$lib/components/nav.svelte";
 
   import { page } from "$app/stores";
   import { setTokenStore } from "../stores/tokenStore";
@@ -19,7 +19,7 @@
   let searchPlatform: string = "";
 </script>
 
-<main>  
+<main>
   <Nav />
   <div class="search-container">
     <select bind:value={searchBy}>
