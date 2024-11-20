@@ -41,6 +41,26 @@ export const getGameListings = async (
   }
 };
 
+export const insertGameListing = async (
+  title: string,
+  description: string,
+  price: number,
+  posted_by: number,
+  platform: string,
+  category: string
+): Promise<number | undefined> => {
+  try {
+    const result = await pool.query(
+      "INSERT INTO GAME_LISTING (title, description, price, posted_by, platform, category) VALUES (?, ?, ?, ?, ?, ?)",
+      [title, description, price, posted_by, platform, category]
+    );
+
+    return (result[0] as any).insertId as number;
+  } catch (_) {
+    return undefined;
+  }
+};
+
 export const getGameListingCategories = async (): Promise<
   GameCategoryModel[] | undefined
 > => {
