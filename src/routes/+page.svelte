@@ -1,12 +1,13 @@
 <script lang="ts">
   import "../app.scss";
-  import Nav from "$lib/components/nav.svelte";
+  import Nav from "$lib/components/Nav.svelte";
 
   import { page } from "$app/stores";
   import { setTokenStore } from "../stores/tokenStore";
   import { listingsStore, setListingsStore } from "../stores/listingsStore";
   import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
   import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
+  import ListingResult from "$lib/components/ListingResult.svelte";
 
   setTokenStore($page.data.token);
   setListingsStore($page.data.listings);
@@ -47,13 +48,12 @@
   <div class="listings-container">
     {#if $listingsStore.length > 0}
       {#each $listingsStore as listing}
-        <div class="listing">
-          <!-- We may want to implement images for listings here if we have time -->
-          <!-- <img src={listing.image} alt={listing.title} /> -->
-          <h2>{listing.title}</h2>
-          <p>{listing.username}</p>
-          <p>{listing.price}</p>
-        </div>
+        <ListingResult
+          title={listing.title}
+          username={listing.username}
+          price={listing.price}
+          description={listing.description}
+        />
       {/each}
     {:else}
       <p>No listings found.</p>

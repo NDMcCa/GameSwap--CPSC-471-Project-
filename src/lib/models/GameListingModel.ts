@@ -15,4 +15,8 @@ export interface GameListingModel {
 export type JoinedGameListingModel = GameListingModel &
   SellerModel &
   GamePlatformModel &
-  GameCategoryModel;
+  GameCategoryModel & {
+    platform_description: string;
+  } & {
+    category_description: string;
+  };

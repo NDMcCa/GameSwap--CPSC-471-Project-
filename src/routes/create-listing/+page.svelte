@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Nav from "$lib/components/nav.svelte";
+  import Nav from "$lib/components/Nav.svelte";
   import { page } from "$app/stores";
   import { setTokenStore } from "../../stores/tokenStore";
   import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
