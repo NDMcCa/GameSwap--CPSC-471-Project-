@@ -62,6 +62,14 @@
 </main>
 
 <style lang="scss">
+  div.listings-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
   div.search-container {
     display: flex;
     justify-content: center;

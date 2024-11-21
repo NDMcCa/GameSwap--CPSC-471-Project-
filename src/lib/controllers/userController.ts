@@ -84,7 +84,7 @@ const insertUser = async (
       [userType, username, email, passwordHash, city]
     );
 
-    const userId = (result as any).insertId as number;
+    const userId = (result[0] as any).insertId as number;
 
     if (userType === "SELLER") {
       return {
