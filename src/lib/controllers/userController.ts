@@ -1,14 +1,9 @@
 import pool from "$lib/db";
 import bcrypt from "bcrypt";
+import { UserVariant } from "$lib/models/UserVariant";
 import type { BuyerModel } from "$lib/models/BuyerModel";
 import type { ModeratorModel } from "$lib/models/ModeratorModel";
 import type { SellerModel } from "$lib/models/SellerModel";
-
-export enum UserVariant {
-  MODERATOR = "MODERATOR",
-  SELLER = "SELLER",
-  BUYER = "BUYER",
-}
 
 export type UserType = ModeratorModel | BuyerModel | SellerModel;
 
@@ -89,7 +84,7 @@ const insertUser = async (
       [userType, username, email, passwordHash, city]
     );
 
-    const userId = (result as any).insertId as number;
+    const userId = (result[0] as any).insertId as number;
 
     if (userType === "SELLER") {
       return {

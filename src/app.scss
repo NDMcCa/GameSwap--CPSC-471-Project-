@@ -9,6 +9,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  background-color: #f4f4f4;
 }
 
 div.button-container,
@@ -22,7 +23,8 @@ form {
 
 input,
 select,
-button {
+button,
+textarea {
   padding: 0.5rem;
   font-size: 1rem;
   border: none;
@@ -30,11 +32,33 @@ button {
   color: #333;
 }
 
-body.dark-mode {
-  input,
-  select,
-  button {
-    background-color: #333;
-    color: #fff;
+textarea {
+  resize: vertical;
+}
+
+button {
+  cursor: pointer;
+}
+
+body {
+  $bg-trans: background-color 0.3s;
+
+  transition: $bg-trans;
+
+  & * {
+    transition: $bg-trans;
+  }
+
+  &.dark-mode {
+    background-color: #272727;
+    color: white;
+
+    input,
+    select,
+    button,
+    textarea {
+      background-color: #333;
+      color: #fff;
+    }
   }
 }

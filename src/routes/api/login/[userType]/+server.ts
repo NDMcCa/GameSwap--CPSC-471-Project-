@@ -2,7 +2,6 @@ import {
   authenticateBuyer,
   authenticateModerator,
   authenticateSeller,
-  UserVariant,
   type UserType,
 } from "$lib/controllers/userController";
 import {
@@ -14,6 +13,7 @@ import {
 } from "$lib/jwt";
 import type { AuthRequest } from "$lib/models/AuthRequest";
 import type { AuthResponse } from "$lib/models/AuthResponse";
+import { UserVariant } from "$lib/models/UserVariant";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({ request, params, cookies }) => {

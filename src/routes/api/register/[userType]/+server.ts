@@ -1,7 +1,6 @@
 import {
   insertBuyer,
   insertSeller,
-  UserVariant,
   type UserType,
 } from "$lib/controllers/userController";
 import { emailRegex } from "$lib/regex";
@@ -14,6 +13,7 @@ import {
 import type { RegisterRequest } from "$lib/models/RegisterRequest";
 import type { RequestHandler } from "@sveltejs/kit";
 import type { AuthResponse } from "$lib/models/AuthResponse";
+import { UserVariant } from "$lib/models/UserVariant";
 
 export const POST: RequestHandler = async ({ request, params, cookies }) => {
   const { username, password, email, city } =
