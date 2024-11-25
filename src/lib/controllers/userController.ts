@@ -130,3 +130,49 @@ export const insertSeller = async (
     SellerModel | undefined
   >;
 };
+
+export const getBannedUsers = async (
+): Promise<UserType[] | undefined> => {
+  try {
+    const result = await pool.query(
+      `SELECT 
+         SELLER.username AS banned_user, 
+         MODERATOR.username AS banning_moderator
+       FROM 
+         BAN_LIST 
+       JOIN 
+         SELLER ON BAN_LIST.target_seller = SELLER.seller_id
+       JOIN 
+         MODERATOR ON BAN_LIST.banned_by = MODERATOR.moderator_id;`
+    );
+
+    return result[0] as UserType[];
+  } catch (_) {
+    return undefined;
+  }
+};
+
+export const banUser = async (
+  targetSeller: number,
+  mdusername: string
+): Promise<boolean> => {
+  try {
+    await pool.query("INSERT INTO BAN_LIST (target_seller) VALUES (?)", [targetSeller]);
+
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
+
+export const unbanUser = async (
+  targetSeller: number
+): Promise<boolean> => {
+  try {
+    await pool.query("DELETE FROM BAN_LIST WHERE target_seller = ?", [targetSeller]);
+
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
