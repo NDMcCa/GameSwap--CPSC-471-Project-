@@ -17,11 +17,11 @@ export const getGameListings = async (
       query += " WHERE";
 
       if (category) {
-        query += ` category_name LIKE '%${category}%'`;
+        query += ` category_name = '${category}'`;
       }
 
       if (platform) {
-        query += ` platform_name LIKE '%${platform}%'`;
+        query += ` platform_name = '${platform}'`;
       }
 
       if (title) {
