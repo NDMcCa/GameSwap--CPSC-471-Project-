@@ -48,12 +48,7 @@
   <div class="listings-container">
     {#if $listingsStore.length > 0}
       {#each $listingsStore as listing}
-        <ListingResult
-          title={listing.title}
-          username={listing.username}
-          price={listing.price}
-          description={listing.description}
-        />
+        <ListingResult model={listing} />
       {/each}
     {:else}
       <p>No listings found.</p>

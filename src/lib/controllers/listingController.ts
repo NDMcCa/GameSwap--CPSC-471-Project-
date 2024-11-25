@@ -17,21 +17,23 @@ export const getGameListings = async (
       query += " WHERE";
 
       if (category) {
-        query += ` category_name LIKE '${category}'`;
+        query += ` category_name LIKE '%${category}%'`;
       }
 
       if (platform) {
-        query += ` platform_name LIKE '${platform}'`;
+        query += ` platform_name LIKE '%${platform}%'`;
       }
 
       if (title) {
-        query += ` game LIKE '${title}'`;
+        query += ` game LIKE '%${title}%'`;
       }
 
       if (seller) {
-        query += ` username LIKE '${seller}'`;
+        query += ` username LIKE '%${seller}%'`;
       }
     }
+
+    query += " ORDER BY listing_id DESC";
 
     const result = await pool.query(query);
 
@@ -56,7 +58,8 @@ export const insertGameListing = async (
     );
 
     return (result[0] as any).insertId as number;
-  } catch (_) {
+  } catch (err) {
+    console.error(err);
     return undefined;
   }
 };
