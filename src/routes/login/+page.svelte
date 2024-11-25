@@ -5,7 +5,7 @@
   import type { AuthRequest } from "$lib/models/AuthRequest";
 
   let usernameOrEmail = "";
-  let userType = "buyer";
+  let userType: "buyer" | "seller" | "moderator" = "buyer";
   let password = "";
   let errorMessage = "";
 
@@ -67,6 +67,7 @@
       <select id="userType" name="userType" bind:value={userType}>
         <option value="buyer">Buyer</option>
         <option value="seller">Seller</option>
+        <option value="moderator">Moderator</option>
       </select>
 
       <button type="submit">Login</button>

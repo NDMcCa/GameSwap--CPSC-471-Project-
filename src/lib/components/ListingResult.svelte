@@ -1,15 +1,18 @@
 <script lang="ts">
-  export let title: string;
-  export let username: string;
-  export let price: number;
-  export let description: string;
+  import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
+
+  export let model: JoinedGameListingModel;
 </script>
 
 <div class="listing">
-  <h2>{title}</h2>
-  <p class="username">{username}</p>
-  <p class="price">{price}</p>
-  <p class="desc">{description}</p>
+  <h2>{model.title}</h2>
+  <p class="username">{model.username}</p>
+  <div class="info-container">
+    <span class="price">{model.price}</span>
+    <span class="category">{model.category}</span>
+    <span class="platform">{model.platform}</span>
+  </div>
+  <p class="desc">{model.description}</p>
 </div>
 
 <style lang="scss">
@@ -32,14 +35,55 @@
     font-size: 0.9rem;
   }
 
-  p.price {
-    margin: 0;
-    margin-top: 0.5rem;
-    font-size: 1.2rem;
-    color: rgb(37, 214, 37) !important;
+  div.info-container {
+    display: flex;
+    margin-top: 1rem;
+    align-items: center;
+    span.price {
+      margin: 0;
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+      color: rgb(37, 214, 37) !important;
 
-    &::before {
-      content: "$";
+      &::before {
+        content: "$";
+      }
+    }
+
+    span.category,
+    span.platform {
+      margin: 0;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+
+      &::before {
+        content: "-";
+        margin-right: 0.5rem;
+        margin-left: 0.5rem;
+      }
+    }
+
+    span.price {
+      margin: 0;
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+      color: rgb(37, 214, 37) !important;
+
+      &::before {
+        content: "$";
+      }
+    }
+
+    span.category {
+      margin: 0;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    span.platform {
+      margin: 0;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
     }
   }
 
