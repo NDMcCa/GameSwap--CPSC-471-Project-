@@ -2,11 +2,15 @@ import { getGameListings } from "$lib/controllers/listingController";
 import type { SearchListingRequest } from "$lib/models/SearchListingRequest";
 import type { RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ params }) => {
-  const { title, seller, searchCategory, searchPlatform } =
-    params as unknown as SearchListingRequest;
+export const GET: RequestHandler = async ({ url }) => {
+  const searchOptions: SearchListingRequest = {
+    title: url.searchParams.get("title") ?? undefined,
+    seller: url.searchParams.get("seller") ?? undefined,
+    searchCategory: url.searchParams.get("searchCategory") ?? undefined,
+    searchPlatform: url.searchParams.get("searchPlatform") ?? undefined,
+  };
 
-  if (title && seller) {
+  if (searchOptions.title && searchOptions.seller) {
     return new Response(
       JSON.stringify({
         message: "Searching by title and seller must be mutually exclusive",
@@ -18,10 +22,10 @@ export const GET: RequestHandler = async ({ params }) => {
   }
 
   const listings = await getGameListings(
-    searchCategory,
-    searchPlatform,
-    title,
-    seller
+    searchOptions.searchCategory,
+    searchOptions.searchPlatform,
+    searchOptions.title,
+    searchOptions.seller
   );
 
   if (!listings) {

@@ -41,11 +41,11 @@
     }
 
     if (req.searchCategory) {
-      path.searchParams.append("category", req.searchCategory);
+      path.searchParams.append("searchCategory", req.searchCategory);
     }
 
     if (req.searchPlatform) {
-      path.searchParams.append("platform", req.searchPlatform);
+      path.searchParams.append("searchPlatform", req.searchPlatform);
     }
 
     const res = await fetch(path);
