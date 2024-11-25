@@ -46,7 +46,6 @@ export const getGameListings = async (
     query += " ORDER BY listing_id DESC";
 
     const result = await pool.query(query);
-
     return result[0] as JoinedGameListingModel[];
   } catch (_) {
     return undefined;

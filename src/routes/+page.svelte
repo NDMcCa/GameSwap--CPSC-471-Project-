@@ -102,6 +102,7 @@
     justify-content: center;
     gap: 1rem;
     width: 100%;
+    padding-bottom: 1rem;
   }
 
   div.search-container {
