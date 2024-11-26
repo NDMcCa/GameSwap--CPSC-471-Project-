@@ -5,7 +5,7 @@
 </script>
 
 <div class="listing">
-  <h2>{model.title}</h2>
+  <h2><a href={`/listings/${model.listing_id}`}>{model.title}</a></h2>
   <p class="username">{model.username}</p>
   <div class="info-container">
     <span class="price">{model.price}</span>
@@ -27,6 +27,15 @@
 
   h2 {
     margin: 0;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   p.username {
