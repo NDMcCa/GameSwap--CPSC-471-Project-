@@ -47,7 +47,7 @@
         {#if $tokenStore.variant == UserVariant.SELLER}
           <button on:click={() => goto("/create-listing")}>Create Listing</button>
         {/if}
-        {#if $tokenStore.variant == UserVariant.BUYER} <!-- Deliberately incorrect for the moment until we know how a mod account is made -->
+        {#if $tokenStore.variant == UserVariant.MODERATOR} <!-- Deliberately incorrect for the moment until we know how a mod account is made -->
           <button on:click={() => goto("/moderator")}>Moderator Tools</button>
         {/if}
         <button on:click={logout}>Logout</button>
