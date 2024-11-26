@@ -1,13 +1,15 @@
 <script lang="ts">
   import "../app.scss";
+
   import Nav from "$lib/components/Nav.svelte";
+  import ListingResult from "$lib/components/ListingResult.svelte";
 
   import { page } from "$app/stores";
   import { setTokenStore } from "../stores/tokenStore";
   import { listingsStore, setListingsStore } from "../stores/listingsStore";
   import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
   import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
-  import ListingResult from "$lib/components/ListingResult.svelte";
+  import type { SearchListingRequest } from "$lib/models/SearchListingRequest";
 
   setTokenStore($page.data.token);
   setListingsStore($page.data.listings);
@@ -15,9 +17,45 @@
   const categories = $page.data.categories as GameCategoryModel[];
   const platforms = $page.data.platforms as GamePlatformModel[];
 
+  let searchQuery: string = "";
   let searchBy: "seller" | "game" = "game";
   let searchCategory: string = "";
   let searchPlatform: string = "";
+
+  const searchListings = async () => {
+    let req: SearchListingRequest = {
+      title: searchBy == "game" ? searchQuery : undefined,
+      seller: searchBy == "seller" ? searchQuery : undefined,
+      searchCategory: searchCategory.length > 0 ? searchCategory : undefined,
+      searchPlatform: searchPlatform.length > 0 ? searchPlatform : undefined,
+    };
+
+    const path = new URL("/api/search-listing", window.location.href);
+
+    if (req.title) {
+      path.searchParams.append("title", req.title);
+    }
+
+    if (req.seller) {
+      path.searchParams.append("seller", req.seller);
+    }
+
+    if (req.searchCategory) {
+      path.searchParams.append("searchCategory", req.searchCategory);
+    }
+
+    if (req.searchPlatform) {
+      path.searchParams.append("searchPlatform", req.searchPlatform);
+    }
+
+    const res = await fetch(path);
+
+    if (res.ok) {
+      setListingsStore(await res.json());
+    } else {
+      alert("Failed to search listings.");
+    }
+  };
 </script>
 
 <main>
@@ -40,20 +78,16 @@
       {/each}
     </select>
     <input
+      bind:value={searchQuery}
       type="text"
       placeholder={`Search by ${searchBy}${searchCategory.length > 0 ? ` in ${searchCategory}` : ""}${searchPlatform.length > 0 ? ` for ${searchPlatform}` : ""}...`}
     />
-    <button class="search">Search</button>
+    <button class="search" onclick={searchListings}>Search</button>
   </div>
   <div class="listings-container">
     {#if $listingsStore.length > 0}
       {#each $listingsStore as listing}
-        <ListingResult
-          title={listing.title}
-          username={listing.username}
-          price={listing.price}
-          description={listing.description}
-        />
+        <ListingResult model={listing} />
       {/each}
     {:else}
       <p>No listings found.</p>
@@ -68,6 +102,7 @@
     justify-content: center;
     gap: 1rem;
     width: 100%;
+    padding-bottom: 1rem;
   }
 
   div.search-container {

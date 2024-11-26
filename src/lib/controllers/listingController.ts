@@ -16,25 +16,36 @@ export const getGameListings = async (
     if (category || platform || title || seller) {
       query += " WHERE";
 
+      let additionalConditions: string[] = [];
+
       if (category) {
-        query += ` category_name LIKE '${category}'`;
+        additionalConditions.push(
+          ` GAME_CATEGORY.category_name = '${category}'`
+        );
       }
 
       if (platform) {
-        query += ` platform_name LIKE '${platform}'`;
+        additionalConditions.push(
+          ` GAME_PLATFORM.platform_name = '${platform}'`
+        );
       }
 
       if (title) {
-        query += ` game LIKE '${title}'`;
+        additionalConditions.push(` GAME_LISTING.title LIKE '%${title}%'`);
       }
 
       if (seller) {
-        query += ` username LIKE '${seller}'`;
+        additionalConditions.push(` SELLER.username LIKE '%${seller}%'`);
+      }
+
+      if (additionalConditions.length > 0) {
+        query += additionalConditions.join(" AND ");
       }
     }
 
-    const result = await pool.query(query);
+    query += " ORDER BY listing_id DESC";
 
+    const result = await pool.query(query);
     return result[0] as JoinedGameListingModel[];
   } catch (_) {
     return undefined;
@@ -56,7 +67,8 @@ export const insertGameListing = async (
     );
 
     return (result[0] as any).insertId as number;
-  } catch (_) {
+  } catch (err) {
+    console.error(err);
     return undefined;
   }
 };
