@@ -48,16 +48,6 @@
     display: flex;
     margin-top: 1rem;
     align-items: center;
-    span.price {
-      margin: 0;
-      margin-top: 0.5rem;
-      font-size: 1.2rem;
-      color: rgb(37, 214, 37) !important;
-
-      &::before {
-        content: "$";
-      }
-    }
 
     span.category,
     span.platform {
@@ -81,18 +71,6 @@
       &::before {
         content: "$";
       }
-    }
-
-    span.category {
-      margin: 0;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    span.platform {
-      margin: 0;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
     }
   }
 
