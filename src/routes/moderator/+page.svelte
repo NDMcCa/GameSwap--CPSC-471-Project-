@@ -1,10 +1,14 @@
 <script lang="ts">
     import "../../app.scss";
+    import { page } from "$app/stores";
     import { goto } from "$app/navigation";
     import Nav from "$lib/components/Nav.svelte"; 
     import { listingsStore, setListingsStore } from "../../stores/listingsStore";
     import ReportedListing from "$lib/components/ListingResult.svelte";
-    import BanListItem from "$lib/components/ListingResult.svelte";
+    import BanListItem from "$lib/components/BanListItem.svelte";
+    import type { BannedSellerModel } from "$lib/models/SellerModel";
+
+    const banned = $page.data as BannedSellerModel[];
 </script>
 
 <main>
@@ -13,13 +17,11 @@
     <div class="content">
         <div class="ban-list">
             <h2>Ban List</h2>
-            {#if $listingsStore.length > 0}
-                {#each $listingsStore as listing}
+            {#if banned.length > 0}
+                {#each banned as banned_usr}
                     <BanListItem
-                        title={listing.title}
-                        username={listing.username} 
-                        price={listing.price}
-                        description={listing.description}
+                        banned_user={banned_usr.banned_user}
+                        banning_moderator={banned_usr.banning_moderator} 
                     />
                 {/each}
             {:else}

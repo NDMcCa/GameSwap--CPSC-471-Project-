@@ -1,11 +1,11 @@
 <script lang="ts">
-    export let username: string;
-    export let mdusername: string;
+    export let banned_user: string;
+    export let banning_moderator: string;
   </script>
   
   <div class="banned-user">
-    <p class="username">{username}</p>
-    <p class="username">Banned by: {mdusername}</p>
+    <p class="username">{banned_user}</p>
+    <p class="username">Banned by: {banning_moderator}</p>
   </div>
   
   <style lang="banned-user">

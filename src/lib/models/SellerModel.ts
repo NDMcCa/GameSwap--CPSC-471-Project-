@@ -9,6 +9,7 @@ export interface SellerModel {
   avg_rating: number;
 }
 
-// export type BannedSellerModel = SellerModel & ModeratorModel {
-  
-// }
+export type BannedSellerModel = SellerModel & ModeratorModel & {
+  banned_user: string;
+  banning_moderator: string;
+};

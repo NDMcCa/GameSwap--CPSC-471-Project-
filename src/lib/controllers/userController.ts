@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { UserVariant } from "$lib/models/UserVariant";
 import type { BuyerModel } from "$lib/models/BuyerModel";
 import type { ModeratorModel } from "$lib/models/ModeratorModel";
-import type { SellerModel } from "$lib/models/SellerModel";
+import type { BannedSellerModel, SellerModel } from "$lib/models/SellerModel";
 
 export type UserType = ModeratorModel | BuyerModel | SellerModel;
 
@@ -132,7 +132,7 @@ export const insertSeller = async (
 };
 
 export const getBannedUsers = async (
-): Promise<UserType[] | undefined> => {
+): Promise<BannedSellerModel[] | undefined> => {
   try {
     const result = await pool.query(
       `SELECT 
@@ -146,7 +146,7 @@ export const getBannedUsers = async (
          MODERATOR ON BAN_LIST.banned_by = MODERATOR.moderator_id;`
     );
 
-    return result[0] as UserType[];
+    return result[0] as BannedSellerModel[];
   } catch (_) {
     return undefined;
   }
