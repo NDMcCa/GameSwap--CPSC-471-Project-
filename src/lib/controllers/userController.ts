@@ -153,11 +153,11 @@ export const getBannedUsers = async (
 };
 
 export const banUser = async (
-  targetSeller: number,
-  mdusername: string
+  target_seller: number,
+  banned_by: number
 ): Promise<boolean> => {
   try {
-    await pool.query("INSERT INTO BAN_LIST (target_seller) VALUES (?)", [targetSeller]);
+    await pool.query("INSERT INTO BAN_LIST (target_seller) VALUES (?)", [target_seller]);
 
     return true;
   } catch (_) {
@@ -166,10 +166,10 @@ export const banUser = async (
 };
 
 export const unbanUser = async (
-  targetSeller: number
+  target_seller: number
 ): Promise<boolean> => {
   try {
-    await pool.query("DELETE FROM BAN_LIST WHERE target_seller = ?", [targetSeller]);
+    await pool.query("DELETE FROM BAN_LIST WHERE target_seller = ?", [target_seller]);
 
     return true;
   } catch (_) {

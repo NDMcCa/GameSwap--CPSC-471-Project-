@@ -3,12 +3,12 @@
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
     import Nav from "$lib/components/Nav.svelte"; 
-    import { listingsStore, setListingsStore } from "../../stores/listingsStore";
     import ReportedListing from "$lib/components/ListingResult.svelte";
     import BanListItem from "$lib/components/BanListItem.svelte";
     import type { BannedSellerModel } from "$lib/models/SellerModel";
 
-    const banned = $page.data as BannedSellerModel[];
+    const banned = $page.data.banned as BannedSellerModel[];
+    const reports = $page.data.banned as [];
 </script>
 
 <main>
@@ -30,7 +30,7 @@
         </div>
         <div class="reports">
             <h2>Listing Reports</h2>
-            {#if $listingsStore.length > 0}
+            <!-- {#if $listingsStore.length > 0}
                 {#each $listingsStore as listing}
                     <ReportedListing
                         title={listing.title}
@@ -41,7 +41,7 @@
                 {/each}
             {:else}
                 <p>No listings found.</p>
-            {/if}
+            {/if} -->
         </div>
     </div>
 </main>
