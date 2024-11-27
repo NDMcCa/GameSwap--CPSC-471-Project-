@@ -137,6 +137,7 @@ export const getBannedUsers = async (
     const result = await pool.query(
       `SELECT 
          SELLER.username AS banned_user, 
+         SELLER.seller_id AS seller_id, 
          MODERATOR.username AS banning_moderator
        FROM 
          BAN_LIST 

@@ -6,11 +6,23 @@
     import ReportedListing from "$lib/components/ListingResult.svelte";
     import BanListItem from "$lib/components/BanListItem.svelte";
     import type { BannedSellerModel } from "$lib/models/SellerModel";
-  import ListingResult from "$lib/components/ListingResult.svelte";
+    import ListingResult from "$lib/components/ListingResult.svelte";
 
     const banned = $page.data.banned as BannedSellerModel[];
     // const reports = $page.data.banned as [];
     const reports: string | any[] = []; // Temporary placeholder code to avoid error
+
+    const unban = async (user: BannedSellerModel) => {
+        try {
+            await fetch("/api/unban", {
+                method: "POST",
+                body: JSON.stringify(user)
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
 </script>
 
 <main>
@@ -22,10 +34,14 @@
                 <div>
                 {#if banned.length > 0}
                     {#each banned as banned_usr}
-                        <BanListItem
-                            banned_user={banned_usr.banned_user}
-                            banning_moderator={banned_usr.banning_moderator} 
-                        />
+                        <div class="mod-list-item">
+                            <BanListItem
+                                banned_user={banned_usr.banned_user}
+                                banning_moderator={banned_usr.banning_moderator}
+                                seller_id={banned_usr.seller_id} 
+                            />
+                            <button on:click={() => unban(banned_usr)}>Unban</button>
+                        </div>
                     {/each}
                 {:else}
                     <p>No listings found.</p>
@@ -68,6 +84,11 @@
                 padding: 1rem;  
             }
         }
+    }
+
+    .mod-list-item {
+        display: flex;
+        flex-direction: row;    
     }
     
     

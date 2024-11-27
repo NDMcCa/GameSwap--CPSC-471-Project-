@@ -1,6 +1,7 @@
 <script lang="ts">
     export let banned_user: string;
     export let banning_moderator: string;
+    export let seller_id: number;
   </script>
   
   <div class="banned-user">
