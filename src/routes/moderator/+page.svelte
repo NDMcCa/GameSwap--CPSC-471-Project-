@@ -8,20 +8,26 @@
     import type { BannedSellerModel } from "$lib/models/SellerModel";
     import ListingResult from "$lib/components/ListingResult.svelte";
 
-    const banned = $page.data.banned as BannedSellerModel[];
+    let banned = $page.data.banned as BannedSellerModel[];
     // const reports = $page.data.banned as [];
     const reports: string | any[] = []; // Temporary placeholder code to avoid error
 
     const unban = async (user: BannedSellerModel) => {
         try {
-            await fetch("/api/unban", {
+            const result = await fetch("/api/unban", {
                 method: "POST",
                 body: JSON.stringify(user)
             });
+            if (result.ok) {
+                const newBanned = banned.filter((bannedUser) => bannedUser.banned_user !== user.banned_user);
+                banned = newBanned;
+            }
         } catch (e) {
             console.error(e);
         }
     }
+
+    
 
 </script>
 
