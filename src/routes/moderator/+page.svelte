@@ -7,6 +7,9 @@
     import BanListItem from "$lib/components/BanListItem.svelte";
     import type { BannedSellerModel } from "$lib/models/SellerModel";
     import ListingResult from "$lib/components/ListingResult.svelte";
+    import { setTokenStore } from "../../stores/tokenStore";
+
+    setTokenStore($page.data.token);
 
     let banned = $page.data.banned as BannedSellerModel[];
     // const reports = $page.data.banned as [];
