@@ -4,17 +4,15 @@
   </script>
   
   <div class="banned-user">
-    <p class="username">{banned_user}</p>
+    <h2 class="username">{banned_user}</h2>
     <p class="username">Banned by: {banning_moderator}</p>
   </div>
   
-  <style lang="banned-user">
-    .listing {
-      background-color: white;
-      color: black;
-      margin: 1rem;
-      margin-bottom: 0;
-      padding: 1rem;
+  <style lang="scss">
+    .banned-user {
+      display: flex;
+      flex-direction: row;
+      gap: 2rem;
       width: 100%;
     }
   
@@ -26,22 +24,6 @@
       margin: 0;
       margin-top: 0.5rem;
       font-size: 0.9rem;
-    }
-  
-    p.price {
-      margin: 0;
-      margin-top: 0.5rem;
-      font-size: 1.2rem;
-      color: rgb(37, 214, 37) !important;
-  
-      &::before {
-        content: "$";
-      }
-    }
-  
-    p.desc {
-      margin: 0;
-      margin-top: 1.5rem;
     }
   
     :global(body.dark-mode) {
