@@ -1,7 +1,10 @@
 <script lang="ts">
     import "../../app.scss";
     import { goto } from "$app/navigation";
-    import Nav from "$lib/components/Nav.svelte";   
+    import Nav from "$lib/components/Nav.svelte"; 
+    import { listingsStore, setListingsStore } from "../../stores/listingsStore";
+    import ReportedListing from "$lib/components/ListingResult.svelte";
+    import BanListItem from "$lib/components/ListingResult.svelte";
 </script>
 
 <main>
@@ -10,9 +13,33 @@
     <div class="content">
         <div class="ban-list">
             <h2>Ban List</h2>
+            {#if $listingsStore.length > 0}
+                {#each $listingsStore as listing}
+                    <BanListItem
+                        title={listing.title}
+                        username={listing.username} 
+                        price={listing.price}
+                        description={listing.description}
+                    />
+                {/each}
+            {:else}
+                <p>No listings found.</p>
+            {/if}
         </div>
         <div class="reports">
-            <h2>Reports</h2>
+            <h2>Listing Reports</h2>
+            {#if $listingsStore.length > 0}
+                {#each $listingsStore as listing}
+                    <ReportedListing
+                        title={listing.title}
+                        username={listing.username} 
+                        price={listing.price}
+                        description={listing.description}
+                    />
+                {/each}
+            {:else}
+                <p>No listings found.</p>
+            {/if}
         </div>
     </div>
 </main>
