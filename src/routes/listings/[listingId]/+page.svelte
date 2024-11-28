@@ -14,35 +14,102 @@
   <Nav />
   <section>
     <h1>{listing.title}</h1>
-    <p><strong>Description:</strong> {listing.description}</p>
-    <p>
-      <strong>Category:</strong>
-      {listing.category} - {listing.category_description}
-    </p>
-    <p>
-      <strong>Platform:</strong>
-      {listing.platform} - {listing.platform_description}
-    </p>
-    <p><strong>Price:</strong> ${listing.price}</p>
-    <p><strong>City:</strong> {listing.city}</p>
-    <p><strong>Seller:</strong> {listing.username} ({listing.email})</p>
-    <p><strong>Average Rating:</strong> {listing.avg_rating}</p>
-    <p><strong>Sold:</strong> {listing.is_sold ? "Yes" : "No"}</p>
+    <div class="info-container">
+      <span class="price">${listing.price}</span>
+      <span class={`availability ${listing.is_sold ? "sold" : ""}`}
+        >{listing.is_sold ? "Sold" : "Available"}</span
+      >
+    </div>
+    <div class="seller-container">
+      <span class="seller">{listing.username}</span>
+      <a class="email" href={`mailto:${listing.email}`}>{listing.email}</a>
+      <span class="rating">{listing.avg_rating}/5</span>
+      <span class="city">{listing.city}</span>
+    </div>
+    <div class="categorization-container">
+      <div>
+        <strong>Category:</strong>
+        {listing.category}
+        <p>
+          {listing.category_description}
+        </p>
+      </div>
+      <div>
+        <strong>Platform:</strong>
+        {listing.platform}
+        <p>
+          {listing.platform_description}
+        </p>
+      </div>
+    </div>
+    <strong>Description:</strong>
+    <p>{listing.description}</p>
   </section>
 </main>
 
-<style>
+<style lang="scss">
   section {
-    border: 1px solid #ccc;
     padding: 1rem;
-    border-radius: 8px;
     max-width: 600px;
     margin: 0 auto;
     margin-top: 2rem;
+    min-width: 400px;
+    background-color: white;
+  }
+
+  :global(body.dark-mode) {
+    section {
+      background-color: #333;
+    }
+  }
+
+  div.info-container,
+  div.seller-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  span.price {
+    font-size: 1.2rem;
+    color: rgb(32, 217, 87);
+  }
+
+  span.availability {
+    font-size: 1.2rem;
+    color: rgb(31, 205, 31);
+
+    &.sold {
+      color: red;
+    }
+  }
+
+  a.email {
+    color: rgb(111, 111, 228);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  div.categorization-container {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+    div {
+      margin-bottom: 1.7rem;
+
+      p {
+        margin-top: 0.5rem;
+      }
+    }
   }
 
   h1 {
-    margin-bottom: 0.5rem;
+    margin: 0;
+    margin-bottom: 1rem;
   }
 
   p {
