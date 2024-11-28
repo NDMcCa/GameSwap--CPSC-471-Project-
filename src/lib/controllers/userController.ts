@@ -161,7 +161,8 @@ export const banUser = async (
     await pool.query("INSERT INTO BAN_LIST (target_seller) VALUES (?)", [target_seller]);
 
     return true;
-  } catch (_) {
+  } catch (err) {
+    console.error(err);
     return false;
   }
 };
@@ -173,7 +174,27 @@ export const unbanUser = async (
     await pool.query("DELETE FROM BAN_LIST WHERE target_seller = ?", [target_seller]);
 
     return true;
-  } catch (_) {
+  } catch (err) {
+    console.error(err);
     return false;
+  }
+};
+
+export const getSellers = async (
+): Promise<SellerModel[] | undefined> => {
+  try {
+    const result = await pool.query(
+      `SELECT * 
+        FROM 
+          SELLER 
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM
+            BAN_LIST
+            WHERE BAN_LIST.target_seller = SELLER.seller_id)`);
+
+    return result[0] as SellerModel[];
+  } catch (_) {
+    return undefined;
   }
 };

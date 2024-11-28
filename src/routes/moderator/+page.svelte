@@ -5,13 +5,14 @@
     import Nav from "$lib/components/Nav.svelte"; 
     import ReportedListing from "$lib/components/ListingResult.svelte";
     import BanListItem from "$lib/components/BanListItem.svelte";
-    import type { BannedSellerModel } from "$lib/models/SellerModel";
+    import type { BannedSellerModel, SellerModel } from "$lib/models/SellerModel";
     import ListingResult from "$lib/components/ListingResult.svelte";
     import { setTokenStore } from "../../stores/tokenStore";
 
     setTokenStore($page.data.token);
 
     let banned = $page.data.banned as BannedSellerModel[];
+    let sellers = $page.data.sellers as SellerModel[];
     // const reports = $page.data.banned as [];
     const reports: string | any[] = []; // Temporary placeholder code to avoid error
 
@@ -30,7 +31,20 @@
         }
     }
 
-    
+    const ban = async (user: SellerModel) => {
+        try {
+            const result = await fetch("/api/ban", {
+                method: "POST",
+                body: JSON.stringify(user)
+            });
+            if (result.ok) {
+                const newSellers = sellers.filter((seller) => seller.username !== user.username);
+                sellers = newSellers;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
 </script>
 
@@ -64,6 +78,25 @@
                     {#each reports as reported_listing} 
                         <ListingResult model={reported_listing} 
                         /> <!-- Temporary placeholder code to avoid error-->
+                    {/each}
+                {:else}
+                    <p>No listings found.</p>
+                {/if}
+            </div>
+        </div>
+        <div class="Sellers">
+            <h2>Active Sellers</h2>
+                <div>
+                {#if sellers.length > 0}
+                    {#each sellers as sellers_usr}
+                        <div class="mod-list-item">
+                            <BanListItem
+                                banned_user={sellers_usr.username}
+                                banning_moderator={sellers_usr.username}
+                                seller_id={sellers_usr.seller_id} 
+                            />
+                            <button on:click={() => ban(sellers_usr)}>Ban</button>
+                        </div>
                     {/each}
                 {:else}
                     <p>No listings found.</p>
