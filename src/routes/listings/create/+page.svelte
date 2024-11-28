@@ -4,8 +4,7 @@
   import { setTokenStore } from "../../../stores/tokenStore";
   import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
   import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
-  import type { CreateListingRequest } from "$lib/models/CreateListingRequest";
-
+  import type { CreateListingRequest } from "$lib/models/ListingRequests";
   setTokenStore($page.data.token);
 
   const categories = $page.data.categories as GameCategoryModel[];
@@ -32,7 +31,7 @@
         platform,
       };
 
-      const res = await fetch("/api/listings/create", {
+      const res = await fetch("/api/listings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

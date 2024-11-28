@@ -2,13 +2,17 @@
   import Nav from "$lib/components/Nav.svelte";
 
   import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
   import { setTokenStore, tokenStore } from "../../../stores/tokenStore";
   import { UserVariant } from "$lib/models/UserVariant";
   import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
   import type { SellerModel } from "$lib/models/SellerModel";
   import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
   import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
-  import type { SaveListingRequest } from "$lib/models/CreateListingRequest";
+  import type {
+    DeleteListingRequest,
+    SaveListingRequest,
+  } from "$lib/models/ListingRequests";
 
   setTokenStore($page.data.token);
 
@@ -30,7 +34,7 @@
       platform: listing.platform,
     };
 
-    const result = await fetch("/api/listings/save", {
+    const result = await fetch("/api/listings", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -52,6 +56,26 @@
   $: listing.platform_description =
     platforms.find((p) => p.platform_name === listing.platform)?.description ??
     "No platform description available";
+
+  const handleDelete = async () => {
+    const req: DeleteListingRequest = {
+      listingId: listing.listing_id,
+    };
+
+    const result = await fetch(`/api/listings`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req),
+    });
+
+    if (result.ok) {
+      goto("/");
+    } else {
+      alert("Failed to delete listing");
+    }
+  };
 </script>
 
 <main>
@@ -59,25 +83,27 @@
   <section>
     <div class="title-container">
       <h1>{listing.title}</h1>
-      <div class="options">
-        {#if $tokenStore?.variant == UserVariant.BUYER}
-          <button>Send Offer</button>
-        {/if}
-        {#if $tokenStore?.variant == UserVariant.MODERATOR || $tokenStore?.variant == UserVariant.BUYER}
-          <button>Report</button>
-        {/if}
-        {#if isOwner || $tokenStore?.variant == UserVariant.MODERATOR}
-          {#if isEditing}
-            <button on:click={handleSave}>Save</button>
-          {:else}
-            <button on:click={() => (isEditing = true)}>Edit</button>
+      {#if $tokenStore}
+        <div class="options">
+          {#if $tokenStore.variant == UserVariant.BUYER}
+            <button>Send Offer</button>
           {/if}
-          <button>Delete</button>
-        {/if}
-        {#if isOwner}
-          <button>Mark as Sold</button>
-        {/if}
-      </div>
+          {#if $tokenStore.variant == UserVariant.MODERATOR || $tokenStore.variant == UserVariant.BUYER}
+            <button>Report</button>
+          {/if}
+          {#if isOwner || $tokenStore.variant == UserVariant.MODERATOR}
+            {#if isEditing}
+              <button on:click={handleSave}>Save</button>
+            {:else}
+              <button on:click={() => (isEditing = true)}>Edit</button>
+            {/if}
+            <button on:click={handleDelete}>Delete</button>
+          {/if}
+          {#if isOwner}
+            <button>Mark as Sold</button>
+          {/if}
+        </div>
+      {/if}
     </div>
     <div class="info-container">
       {#if isEditing}

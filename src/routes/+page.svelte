@@ -30,7 +30,7 @@
       searchPlatform: searchPlatform.length > 0 ? searchPlatform : undefined,
     };
 
-    const path = new URL("/api/listings/search", window.location.href);
+    const path = new URL("/api/listings", window.location.href);
 
     if (req.title) {
       path.searchParams.append("title", req.title);

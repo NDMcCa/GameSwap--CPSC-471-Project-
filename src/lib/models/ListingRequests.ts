@@ -6,4 +6,8 @@ export interface CreateListingRequest {
   category: string;
 }
 
+export interface DeleteListingRequest {
+  listingId: number;
+}
+
 export type SaveListingRequest = CreateListingRequest & { listingId: number };

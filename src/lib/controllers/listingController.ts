@@ -68,7 +68,7 @@ export const getGameListingById = async (
 };
 
 export const updateGameListing = async (
-  sellerId: number,
+  sellerId: number | undefined,
   listingId: number,
   title: string,
   description: string,
@@ -77,10 +77,44 @@ export const updateGameListing = async (
   category: string
 ): Promise<boolean> => {
   try {
-    const result = await pool.query(
-      "UPDATE GAME_LISTING SET title = ?, description = ?, price = ?, platform = ?, category = ? WHERE posted_by = ? AND listing_id = ?",
-      [title, description, price, platform, category, sellerId, listingId]
-    );
+    let result;
+
+    if (sellerId) {
+      result = await pool.query(
+        "UPDATE GAME_LISTING SET title = ?, description = ?, price = ?, platform = ?, category = ? WHERE posted_by = ? AND listing_id = ?",
+        [title, description, price, platform, category, sellerId, listingId]
+      );
+    } else {
+      result = await pool.query(
+        "UPDATE GAME_LISTING SET title = ?, description = ?, price = ?, platform = ?, category = ? WHERE listing_id = ?",
+        [title, description, price, platform, category, listingId]
+      );
+    }
+
+    return (result[0] as any).affectedRows > 0;
+  } catch (_) {
+    return false;
+  }
+};
+
+export const deleteGameListing = async (
+  sellerId: number | undefined,
+  listingId: number
+): Promise<boolean> => {
+  try {
+    let result;
+
+    if (sellerId) {
+      result = await pool.query(
+        "DELETE FROM GAME_LISTING WHERE posted_by = ? AND listing_id = ?",
+        [sellerId, listingId]
+      );
+    } else {
+      result = await pool.query(
+        "DELETE FROM GAME_LISTING WHERE listing_id = ?",
+        [listingId]
+      );
+    }
 
     return (result[0] as any).affectedRows > 0;
   } catch (_) {
