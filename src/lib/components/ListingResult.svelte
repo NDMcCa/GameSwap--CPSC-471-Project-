@@ -5,7 +5,7 @@
 </script>
 
 <div class="listing">
-  <h2>{model.title}</h2>
+  <h2><a href={`/listings/${model.listing_id}`}>{model.title}</a></h2>
   <p class="username">{model.username}</p>
   <div class="info-container">
     <span class="price">{model.price}</span>
@@ -27,6 +27,15 @@
 
   h2 {
     margin: 0;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   p.username {
@@ -39,16 +48,6 @@
     display: flex;
     margin-top: 1rem;
     align-items: center;
-    span.price {
-      margin: 0;
-      margin-top: 0.5rem;
-      font-size: 1.2rem;
-      color: rgb(37, 214, 37) !important;
-
-      &::before {
-        content: "$";
-      }
-    }
 
     span.category,
     span.platform {
@@ -72,18 +71,6 @@
       &::before {
         content: "$";
       }
-    }
-
-    span.category {
-      margin: 0;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    span.platform {
-      margin: 0;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
     }
   }
 

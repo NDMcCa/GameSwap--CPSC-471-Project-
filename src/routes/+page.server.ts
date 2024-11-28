@@ -9,14 +9,14 @@ import {
 export const load: ServerLoad = async ({ cookies }) => {
   const token = verifyToken<TokenContent>(cookies.get("token") ?? "");
 
+  const categories = await getGameListingCategories();
+  const platforms = await getGameListingPlatforms();
   const listings = await getGameListings(
     undefined,
     undefined,
     undefined,
     undefined
   );
-  const categories = await getGameListingCategories();
-  const platforms = await getGameListingPlatforms();
 
   if (!listings || !categories || !platforms) {
     throw new Error("Failed to fetch data");

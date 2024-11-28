@@ -4,7 +4,7 @@
   import { goto } from "$app/navigation";
   import { setTokenStore, tokenStore } from "../../stores/tokenStore";
   import { UserVariant } from "$lib/models/UserVariant";
-  import { page } from '$app/stores';
+  import { page } from "$app/stores";
 
   const logout = async () => {
     await fetch("/api/logout", {
@@ -14,9 +14,9 @@
     setTokenStore(undefined);
   };
 
-  function toggle() {
+  const toggleTheme = () => {
     window.document.body.classList.toggle("dark-mode");
-  }
+  };
 </script>
 
 <div class="top-bar">
@@ -24,30 +24,31 @@
     <h1 class="game" style="font-family: Impact, sans-serif;">Game</h1>
     <h1 style="font-family: Impact, sans-serif; color: teal">Swap</h1>
   </button>
-  {#if $page.url.pathname === "/moderator" }
-  <div class="user-container">
-    {#if $tokenStore}
-      <div>
-        {$tokenStore.user.username} ({$tokenStore.variant.toLocaleLowerCase()})
-      </div>  
-      <button on:click={logout}>Logout</button>
-    {:else}
-      <button on:click={() => goto("/login")}>Login</button>
-      <button on:click={() => goto("/register")}>Register</button>
-    {/if}
-    <button on:click={toggle}>Mode</button>
-  </div>
-  
+  {#if $page.url.pathname === "/moderator"}
+    <div class="user-container">
+      {#if $tokenStore}
+        <div>
+          {$tokenStore.user.username} ({$tokenStore.variant.toLocaleLowerCase()})
+        </div>
+        <button on:click={logout}>Logout</button>
+      {:else}
+        <button on:click={() => goto("/login")}>Login</button>
+        <button on:click={() => goto("/register")}>Register</button>
+      {/if}
+      <button on:click={toggleTheme}>Mode</button>
+    </div>
   {:else}
     <div class="user-container">
       {#if $tokenStore}
         <div>
           {$tokenStore.user.username} ({$tokenStore.variant.toLocaleLowerCase()})
-        </div>  
+        </div>
         {#if $tokenStore.variant == UserVariant.SELLER}
-          <button on:click={() => goto("/create-listing")}>Create Listing</button>
+          <button on:click={() => goto("/listings/create")}
+            >Create Listing</button
+          >
         {/if}
-        {#if $tokenStore.variant == UserVariant.BUYER} <!-- Deliberately incorrect for the moment until we know how a mod account is made -->
+        {#if $tokenStore.variant == UserVariant.MODERATOR}
           <button on:click={() => goto("/moderator")}>Moderator Tools</button>
         {/if}
         <button on:click={logout}>Logout</button>
@@ -55,9 +56,9 @@
         <button on:click={() => goto("/login")}>Login</button>
         <button on:click={() => goto("/register")}>Register</button>
       {/if}
-      <button on:click={toggle}>Mode</button>
+      <button on:click={toggleTheme}>Mode</button>
     </div>
-{/if}
+  {/if}
 </div>
 
 <style lang="scss">
