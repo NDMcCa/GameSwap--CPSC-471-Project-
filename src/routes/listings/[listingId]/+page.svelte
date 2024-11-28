@@ -3,12 +3,55 @@
 
   import { page } from "$app/stores";
   import { setTokenStore, tokenStore } from "../../../stores/tokenStore";
-  import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
   import { UserVariant } from "$lib/models/UserVariant";
+  import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
+  import type { SellerModel } from "$lib/models/SellerModel";
+  import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
+  import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
+  import type { SaveListingRequest } from "$lib/models/CreateListingRequest";
 
   setTokenStore($page.data.token);
 
+  const categories = $page.data.categories as GameCategoryModel[];
+  const platforms = $page.data.platforms as GamePlatformModel[];
   const listing = $page.data.listing as JoinedGameListingModel;
+  const isOwner =
+    listing.seller_id === ($tokenStore?.user as SellerModel)?.seller_id;
+
+  let isEditing = false;
+
+  const handleSave = async () => {
+    const req: SaveListingRequest = {
+      listingId: listing.listing_id,
+      title: listing.title,
+      description: listing.description,
+      price: listing.price,
+      category: listing.category,
+      platform: listing.platform,
+    };
+
+    const result = await fetch("/api/listings/save", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req),
+    });
+
+    if (result.ok) {
+      isEditing = false;
+    } else {
+      alert("Failed to save listing");
+    }
+  };
+
+  $: listing.category_description =
+    categories.find((c) => c.category_name === listing.category)?.description ??
+    "No category description available";
+
+  $: listing.platform_description =
+    platforms.find((p) => p.platform_name === listing.platform)?.description ??
+    "No platform description available";
 </script>
 
 <main>
@@ -17,19 +60,31 @@
     <div class="title-container">
       <h1>{listing.title}</h1>
       <div class="options">
-        {#if $tokenStore?.variant == UserVariant.MODERATOR}
-          <button>Report</button>
-          <button>Delete</button>
-          <button>Edit</button>
-        {/if}
         {#if $tokenStore?.variant == UserVariant.BUYER}
           <button>Send Offer</button>
+        {/if}
+        {#if $tokenStore?.variant == UserVariant.MODERATOR || $tokenStore?.variant == UserVariant.BUYER}
           <button>Report</button>
+        {/if}
+        {#if isOwner || $tokenStore?.variant == UserVariant.MODERATOR}
+          {#if isEditing}
+            <button on:click={handleSave}>Save</button>
+          {:else}
+            <button on:click={() => (isEditing = true)}>Edit</button>
+          {/if}
+          <button>Delete</button>
+        {/if}
+        {#if isOwner}
+          <button>Mark as Sold</button>
         {/if}
       </div>
     </div>
     <div class="info-container">
-      <span class="price">${listing.price}</span>
+      {#if isEditing}
+        <input type="number" bind:value={listing.price} />
+      {:else}
+        <span class="price">{listing.price}</span>
+      {/if}
       <span class={`availability ${listing.is_sold ? "sold" : ""}`}
         >{listing.is_sold ? "Sold" : "Available"}</span
       >
@@ -41,23 +96,51 @@
       <span class="city">{listing.city}</span>
     </div>
     <div class="categorization-container">
-      <div>
-        <strong>Category:</strong>
-        {listing.category}
-        <p>
-          {listing.category_description}
-        </p>
-      </div>
-      <div>
-        <strong>Platform:</strong>
-        {listing.platform}
-        <p>
-          {listing.platform_description}
-        </p>
-      </div>
+      {#if isEditing}
+        <div>
+          <strong>Category:</strong>
+          <select bind:value={listing.category}>
+            {#each categories as category}
+              <option value={category.category_name}
+                >{category.category_name}</option
+              >
+            {/each}
+          </select>
+        </div>
+        <div>
+          <strong>Platform:</strong>
+          <select bind:value={listing.platform}>
+            {#each platforms as platform}
+              <option value={platform.platform_name}
+                >{platform.platform_name}</option
+              >
+            {/each}
+          </select>
+        </div>
+      {:else}
+        <div>
+          <strong>Category:</strong>
+          {listing.category}
+          <p>
+            {listing.category_description}
+          </p>
+        </div>
+        <div>
+          <strong>Platform:</strong>
+          {listing.platform}
+          <p>
+            {listing.platform_description}
+          </p>
+        </div>
+      {/if}
     </div>
     <strong>Description:</strong>
-    <p>{listing.description}</p>
+    {#if isEditing}
+      <br />
+      <textarea bind:value={listing.description}></textarea>
+    {:else}
+      <p>{listing.description}</p>
+    {/if}
   </section>
 </main>
 
@@ -117,6 +200,10 @@
   span.price {
     font-size: 1.2rem;
     color: rgb(32, 217, 87);
+
+    &::before {
+      content: "$";
+    }
   }
 
   span.availability {

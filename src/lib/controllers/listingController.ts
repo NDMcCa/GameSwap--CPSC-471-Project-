@@ -67,6 +67,27 @@ export const getGameListingById = async (
   }
 };
 
+export const updateGameListing = async (
+  sellerId: number,
+  listingId: number,
+  title: string,
+  description: string,
+  price: number,
+  platform: string,
+  category: string
+): Promise<boolean> => {
+  try {
+    const result = await pool.query(
+      "UPDATE GAME_LISTING SET title = ?, description = ?, price = ?, platform = ?, category = ? WHERE posted_by = ? AND listing_id = ?",
+      [title, description, price, platform, category, sellerId, listingId]
+    );
+
+    return (result[0] as any).affectedRows > 0;
+  } catch (_) {
+    return false;
+  }
+};
+
 export const insertGameListing = async (
   title: string,
   description: string,

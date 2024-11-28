@@ -5,3 +5,5 @@ export interface CreateListingRequest {
   platform: string;
   category: string;
 }
+
+export type SaveListingRequest = CreateListingRequest & { listingId: number };
