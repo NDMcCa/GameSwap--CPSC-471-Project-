@@ -2,8 +2,9 @@
   import Nav from "$lib/components/Nav.svelte";
 
   import { page } from "$app/stores";
-  import { setTokenStore } from "../../../stores/tokenStore";
+  import { setTokenStore, tokenStore } from "../../../stores/tokenStore";
   import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
+  import { UserVariant } from "$lib/models/UserVariant";
 
   setTokenStore($page.data.token);
 
@@ -13,7 +14,20 @@
 <main>
   <Nav />
   <section>
-    <h1>{listing.title}</h1>
+    <div class="title-container">
+      <h1>{listing.title}</h1>
+      <div class="options">
+        {#if $tokenStore?.variant == UserVariant.MODERATOR}
+          <button>Report</button>
+          <button>Delete</button>
+          <button>Edit</button>
+        {/if}
+        {#if $tokenStore?.variant == UserVariant.BUYER}
+          <button>Send Offer</button>
+          <button>Report</button>
+        {/if}
+      </div>
+    </div>
     <div class="info-container">
       <span class="price">${listing.price}</span>
       <span class={`availability ${listing.is_sold ? "sold" : ""}`}
@@ -63,6 +77,35 @@
     }
   }
 
+  div.title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      margin: 0;
+    }
+
+    div.options {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        padding: 0.4rem 0.7rem;
+        border: none;
+        background-color: rgb(111, 111, 228);
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: rgb(111, 111, 228, 0.8);
+        }
+      }
+    }
+  }
+
   div.info-container,
   div.seller-container {
     display: flex;
@@ -105,11 +148,6 @@
         margin-top: 0.5rem;
       }
     }
-  }
-
-  h1 {
-    margin: 0;
-    margin-bottom: 1rem;
   }
 
   p {
