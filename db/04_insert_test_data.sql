@@ -89,3 +89,17 @@ VALUES
         'Xbox',
         'Adventure'
     );
+
+-- Insert some sample offers
+INSERT INTO
+    SENDS_OFFER_TO (buyer, seller, offer_comment)
+VALUES
+    (1, 1, 'I will pay $15 for Halo 3');
+
+-- Insert some default transactions
+INSERT INTO
+    TRANSACTION (recorded_seller, recorded_buyer, for_listing)
+VALUES
+    (1, 1, 1),
+    (1, 1, 2),
+    (1, 1, 3);
