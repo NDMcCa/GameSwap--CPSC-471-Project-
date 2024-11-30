@@ -3,6 +3,7 @@
     import Nav from "$lib/components/Nav.svelte";
     import { sellersStore, setSellersStore } from "../../stores/sellersStore";
     import { page } from "$app/stores";
+    import SellerItem from "$lib/components/SellerItem.svelte";
 
     setSellersStore($page.data.sellers);
 </script>
@@ -16,10 +17,10 @@
 
         {#if $sellersStore.length > 0}
             {#each $sellersStore as seller}
-                <h2>{seller.username}</h2>
+            <SellerItem model={seller} />
             {/each}
         {:else}
-        <p>No Sellers found.</p>
+            <p>No Sellers found.</p>
         {/if}
     </div>
 </main>
