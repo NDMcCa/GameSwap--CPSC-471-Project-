@@ -194,20 +194,32 @@ export const unbanUser = async (
   }
 };
 
-export const getSellers = async (
-): Promise<SellerModel[] | undefined> => {
+export const getSellers = async (): Promise<
+  SellerModel[] | undefined
+> => {
   try {
-    const result = await pool.query(
-      `SELECT * 
-        FROM 
-          SELLER 
-        WHERE NOT EXISTS (
-          SELECT 1
-          FROM
-            BAN_LIST
-            WHERE BAN_LIST.target_seller = SELLER.seller_id)`);
+    const result = await pool.query(`SELECT s.* FROM SELLER AS s
+                                     LEFT JOIN BAN_LIST AS b ON s.seller_id = b.target_seller
+                                      WHERE b.target_seller IS NULL;`);
 
     return result[0] as SellerModel[];
+  } catch (_) {
+    return undefined;
+  }
+};
+
+export const getSellerById = async (
+  seller_id: number
+): Promise<SellerModel | undefined> => {
+  try {
+    const result = await pool.query(
+      `SELECT s.* FROM SELLER s
+       LEFT JOIN BAN_LIST b ON s.seller_id = b.target_seller
+        WHERE b.target_seller IS NULL AND s.seller_id = ?`,
+      [seller_id]
+    );
+
+    return (result[0] as SellerModel[])[0];
   } catch (_) {
     return undefined;
   }
