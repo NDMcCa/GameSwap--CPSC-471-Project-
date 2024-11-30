@@ -18,11 +18,11 @@
     }
   
     h2 {
-      color: white;
+      color: black;
     }
 
     p {
-      color: white;
+      color: black;
     }
   
     :global(body.dark-mode) {
