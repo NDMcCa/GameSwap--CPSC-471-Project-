@@ -6,7 +6,7 @@ export const getOffers = async (
 ): Promise<JoinedOfferModel[] | undefined> => {
   try {
     const result = await pool.query(
-      "SELECT * FROM SENDS_OFFER JOIN BUYER ON SENDS_OFFER.buyer = BUYER.buyer_id WHERE seller = ?",
+      "SELECT * FROM SENDS_OFFER_TO JOIN BUYER ON SENDS_OFFER_TO.buyer = BUYER.buyer_id WHERE seller = ?",
       [sellerId]
     );
 

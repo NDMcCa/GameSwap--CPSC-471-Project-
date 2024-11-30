@@ -19,7 +19,6 @@
   .listing {
     background-color: white;
     color: black;
-    margin: 1rem;
     margin-bottom: 0;
     padding: 1rem;
     width: 100%;

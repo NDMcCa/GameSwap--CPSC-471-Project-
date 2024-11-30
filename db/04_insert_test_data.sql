@@ -19,6 +19,20 @@ VALUES
         'test2@test.com',
         'Calgary',
         'defaultbuyer'
+    ),
+    (
+        2,
+        '$2b$10$9HDOA8kaxoo0aRWV5yoAbepbrPZTFArVeQHy9mSTdTgCgA9tJFQA2',
+        'test69@420.com',
+        'Toronto',
+        'defaultbuyer2'
+    ),
+    (
+        3,
+        '$2b$10$9HDOA8kaxoo0aRWV5yoAbepbrPZTFArVeQHy9mSTdTgCgA9tJFQA2',
+        'test420@69.com',
+        'Vancouver',
+        'defaultbuyer3'
     );
 
 INSERT INTO
@@ -94,7 +108,9 @@ VALUES
 INSERT INTO
     SENDS_OFFER_TO (buyer, seller, offer_comment)
 VALUES
-    (1, 1, 'I will pay $15 for Halo 3');
+    (1, 1, 'I will pay $15 for Halo 3'),
+    (2, 1, 'I will give you 0.4332 Gen Z Quant for Super Mario 64'),
+    (3, 1, 'I will give you 0.69420 Chill Guy Token for Final Fantasy VII');
 
 -- Insert some default transactions
 INSERT INTO
