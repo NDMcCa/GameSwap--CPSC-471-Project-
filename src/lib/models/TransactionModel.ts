@@ -1,4 +1,4 @@
-import type { BuyerModel } from "./BuyerModel";
+import type { GameListingModel } from "./GameListingModel";
 import type { SellerModel } from "./SellerModel";
 
 export interface TransactionModel {
@@ -8,5 +8,6 @@ export interface TransactionModel {
   timestamp: string;
 }
 
-export type JoinedSellerTransactionModel = TransactionModel & SellerModel;
-export type JoinedBuyerTransactionModel = TransactionModel & BuyerModel;
+export type JoinedTransactionModel = TransactionModel &
+  SellerModel &
+  GameListingModel;

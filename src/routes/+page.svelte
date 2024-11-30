@@ -4,6 +4,7 @@
   import Nav from "$lib/components/Nav.svelte";
   import ListingResult from "$lib/components/ListingResult.svelte";
   import Offer from "$lib/components/Offer.svelte";
+  import BuyerTransaction from "$lib/components/BuyerTransaction.svelte";
 
   import { page } from "$app/stores";
   import { setTokenStore, tokenStore } from "../stores/tokenStore";
@@ -12,6 +13,8 @@
   import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
   import type { SearchListingRequest } from "$lib/models/SearchListingRequest";
   import type { JoinedOfferModel } from "$lib/models/SendsOfferModel";
+  import type { JoinedTransactionModel } from "$lib/models/TransactionModel";
+  import type { BuyerModel } from "$lib/models/BuyerModel";
 
   setTokenStore($page.data.token);
   setListingsStore($page.data.listings);
@@ -20,6 +23,9 @@
   const platforms = $page.data.platforms as GamePlatformModel[];
   const receivedOffers = $page.data.receivedOffers as
     | JoinedOfferModel[]
+    | undefined;
+  const buyerTransactions = $page.data.buyerTransactions as
+    | JoinedTransactionModel[]
     | undefined;
 
   let searchQuery: string = "";
@@ -99,12 +105,24 @@
         <p>No listings found.</p>
       {/if}
     </div>
-    {#if receivedOffers && $tokenStore}
-      <div class="offers-container">
-        {#each receivedOffers as offer}
-          <Offer model={offer} />
-        {/each}
-      </div>
+    {#if $tokenStore}
+      {#if receivedOffers}
+        <div class="offers-container">
+          {#each receivedOffers as offer}
+            <Offer model={offer} />
+          {/each}
+        </div>
+      {/if}
+      {#if buyerTransactions}
+        <div class="transactions-container">
+          {#each buyerTransactions as transaction}
+            <BuyerTransaction
+              buyerModel={$tokenStore.user as BuyerModel}
+              model={transaction}
+            />
+          {/each}
+        </div>
+      {/if}
     {/if}
   </div>
 </main>
@@ -116,6 +134,7 @@
     width: 100%;
   }
 
+  div.transactions-container,
   div.offers-container {
     border-left: 1px solid black;
     display: flex;
@@ -168,6 +187,7 @@
       color: white;
     }
 
+    div.transactions-container,
     div.offers-container {
       border-color: white;
     }

@@ -5,7 +5,12 @@
 </script>
 
 <div class="listing">
-  <h2><a href={`/listings/${model.listing_id}`}>{model.title}</a></h2>
+  <h2>
+    <a href={`/listings/${model.listing_id}`}>{model.title}</a>
+    {#if model.is_sold}
+      <span>(Sold)</span>
+    {/if}
+  </h2>
   <p class="username">{model.username}</p>
   <div class="info-container">
     <span class="price">{model.price}</span>
@@ -34,6 +39,10 @@
       &:hover {
         text-decoration: underline;
       }
+    }
+
+    span {
+      color: rgb(233, 73, 73);
     }
   }
 
