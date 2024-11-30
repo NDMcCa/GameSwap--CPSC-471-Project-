@@ -2,6 +2,7 @@ import pool from "$lib/db";
 import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
 import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
 import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
+import type { GameListingModel } from "$lib/models/GameListingModel";
 
 export const getGameListings = async (
   category: string | undefined,
@@ -62,6 +63,22 @@ export const getGameListingById = async (
     );
 
     return (result[0] as JoinedGameListingModel[])[0];
+  } catch (_) {
+    return undefined;
+  }
+};
+
+export const getGameListingsBySellerId = async (
+  sellerId: number
+): Promise<JoinedGameListingModel[] | undefined> => {
+  try {
+    const result = await pool.query(`SELECT GAME_LISTING.*, SELLER.*, GAME_CATEGORY.description AS category_description, GAME_PLATFORM.description AS platform_description
+                                     FROM GAME_LISTING JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
+                                      WHERE SELLER.seller_id = ?`,
+      [sellerId]
+    );
+
+    return result[0] as JoinedGameListingModel[];
   } catch (_) {
     return undefined;
   }
