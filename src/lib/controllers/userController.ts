@@ -30,6 +30,20 @@ const authenticateUser = async (
       return undefined;
     }
 
+    if (userVariant === UserVariant.SELLER) {
+      const seller = user as SellerModel;
+      const banCheck = await pool.query(
+        "SELECT * FROM BAN_LIST WHERE target_seller = ?",
+        [seller.seller_id]
+      ); 
+
+      const bans = banCheck[0] as any[];
+      if (bans.length > 0) {
+        return undefined; // Seller is banned
+      }
+  
+    }
+
     return users[0];
   } catch (_) {
     return undefined;
@@ -154,11 +168,11 @@ export const getBannedUsers = async (
 };
 
 export const banUser = async (
-  target_seller: number,
-  banned_by: number
+  banned_by: number,
+  target_seller: number
 ): Promise<boolean> => {
   try {
-    await pool.query("INSERT INTO BAN_LIST (target_seller) VALUES (?)", [target_seller]);
+    await pool.query("INSERT INTO BAN_LIST (banned_by, target_seller) VALUES (?, ?)", [banned_by, target_seller]);
 
     return true;
   } catch (err) {

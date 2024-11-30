@@ -25,6 +25,8 @@
             if (result.ok) {
                 const newBanned = banned.filter((bannedUser) => bannedUser.banned_user !== user.banned_user);
                 banned = newBanned;
+                const newSellers = sellers.concat(user);
+                sellers = newSellers;
             }
         } catch (e) {
             console.error(e);
@@ -40,6 +42,9 @@
             if (result.ok) {
                 const newSellers = sellers.filter((seller) => seller.username !== user.username);
                 sellers = newSellers;
+                const bannedUser = user as BannedSellerModel;
+                const newBanned = banned.concat(bannedUser);
+                banned = newBanned;
             }
         } catch (e) {
             console.error(e);
