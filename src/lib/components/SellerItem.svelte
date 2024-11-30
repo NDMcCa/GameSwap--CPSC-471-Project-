@@ -46,25 +46,6 @@
       color: #333;
       text-decoration: N;
     }
-
-    .seller-card a {
-    color: black;
-    text-decoration: none; 
-    font-weight: bold;
-    }
-
-    .seller-card a:visited {
-    color: black;
-    text-decoration: none;
-    }
-
-    /* .seller-card a:hover {
-    text-decoration: underline; 
-    } */
-
-    .seller-card a:active {
-    color: black; 
-    }
   
     .info-container {
       display: flex;
@@ -77,11 +58,6 @@
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-  
-    .icon {
-      width: 16px;
-      height: 16px;
     }
   
     .rating {
