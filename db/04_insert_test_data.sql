@@ -19,6 +19,20 @@ VALUES
         'test2@test.com',
         'Calgary',
         'defaultbuyer'
+    ),
+    (
+        2,
+        '$2b$10$9HDOA8kaxoo0aRWV5yoAbepbrPZTFArVeQHy9mSTdTgCgA9tJFQA2',
+        'test69@420.com',
+        'Toronto',
+        'defaultbuyer2'
+    ),
+    (
+        3,
+        '$2b$10$9HDOA8kaxoo0aRWV5yoAbepbrPZTFArVeQHy9mSTdTgCgA9tJFQA2',
+        'test420@69.com',
+        'Vancouver',
+        'defaultbuyer3'
     );
 
 INSERT INTO
@@ -33,59 +47,89 @@ VALUES
 -- Insert sample listings
 INSERT INTO
     GAME_LISTING (
+        listing_id,
         title,
         description,
         price,
         posted_by,
         platform,
-        category
+        category,
+        is_sold
     )
 VALUES
     (
+        1,
         'Halo 3',
         'The third installment of the Halo series',
         20.00,
         1,
         'Xbox',
-        'Action'
+        'Action',
+        TRUE
     ),
     (
+        2,
         'Super Mario 64',
         'The first 3D Mario game',
         30.00,
         1,
         'Nintendo 64',
-        'Adventure'
+        'Adventure',
+        TRUE
     ),
     (
+        3,
         'Final Fantasy VII',
         'The first 3D Final Fantasy game',
         40.00,
         1,
         'PlayStation 4',
-        'Role-Playing'
+        'Role-Playing',
+        TRUE
     ),
     (
+        4,
         'Super Mario World',
         'The first Mario game on the Super Nintendo',
         20.00,
         1,
         'Super Nintendo',
-        'Action'
+        'Action',
+        FALSE
     ),
     (
+        5,
         'Sonic the Hedgehog',
         'The first Sonic game',
         10.00,
         1,
         'Sega Genesis',
-        'Action'
+        'Action',
+        FALSE
     ),
     (
+        6,
         'Minecraft',
         'A sandbox game',
         20.00,
         1,
         'Xbox',
-        'Adventure'
+        'Adventure',
+        FALSE
     );
+
+-- Insert some sample offers
+INSERT INTO
+    SENDS_OFFER_TO (buyer, seller, offer_comment)
+VALUES
+    (1, 1, 'I will pay $15 for Halo 3'),
+    (2, 1, 'I will give you 0.4332 Gen Z Quant for Super Mario 64'),
+    (3, 1, 'I will give you 0.69420 Chill Guy Token for Final Fantasy VII');
+
+-- Insert some default transactions
+INSERT INTO
+    TRANSACTION (recorded_seller, recorded_buyer, for_listing)
+VALUES
+    (1, 1, 1),
+    (1, 1, 2),
+    (1, 1, 3);
