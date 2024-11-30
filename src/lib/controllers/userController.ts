@@ -130,3 +130,15 @@ export const insertSeller = async (
     SellerModel | undefined
   >;
 };
+
+export const getSellers = async (): Promise<
+  SellerModel[] | undefined
+> => {
+  try {
+    const result = await pool.query("SELECT * FROM SELLER");
+
+    return result[0] as SellerModel[];
+  } catch (_) {
+    return undefined;
+  }
+};
