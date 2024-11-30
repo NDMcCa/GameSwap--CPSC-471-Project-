@@ -59,7 +59,7 @@
     <div class="content">
         <div class="ban-list">
             <h2>Ban List</h2>
-                <div>
+                <div class="container">
                 {#if banned.length > 0}
                     {#each banned as banned_usr}
                         <div class="mod-list-item">
@@ -78,7 +78,7 @@
         </div>
         <div class="reports">
             <h2>Listing Reports</h2>
-                <div>
+                <div class="container">
                 {#if reports.length > 0}
                     {#each reports as reported_listing} 
                         <ListingResult model={reported_listing} 
@@ -91,7 +91,7 @@
         </div>
         <div class="Sellers">
             <h2>Active Sellers</h2>
-                <div>
+                <div class="container">
                 {#if sellers.length > 0}
                     {#each sellers as sellers_usr}
                         <div class="mod-list-item">
@@ -116,31 +116,49 @@
         display: flex;
         flex-direction: row;
         align-items: start;
+        justify-content: center;
         width: 80%;
         height: 100%;
-        div {
-            width: 50%;
-            margin: 1rem;
-            div{
-                display: flex;
-                flex-direction: column;
-                align-items: left;
-                height: max;
-                box-shadow: inset 0 0 10px #1b1b1b;     
-                margin: 0;         
-                padding: 1rem;  
-            }
+        div.ban-list, div.reports, div.Sellers {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem;
         }
+        
+    }
+
+    div.container{
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        height: max;
+        width: 100%;      
     }
 
     .mod-list-item {
         display: flex;
-        flex-direction: row;    
+        flex-direction: row;
+        width: 100%;
+        padding: 0.5rem;
+        box-shadow: inset 0 0 5px #7c7c7c;     
+        box-sizing: border-box;
+        background-color: #d3d3d3;
+        button {
+            width: 5rem;
+        }    
     }
-    
-    
+
     button {
         margin: 0.5rem;
     }
-
+    
+    :global(body.dark-mode) {
+        .mod-list-item {
+            background-color: #0f0f0f;
+            box-shadow: inset 0 0 5px #000000;     
+        }
+    }   
 </style>

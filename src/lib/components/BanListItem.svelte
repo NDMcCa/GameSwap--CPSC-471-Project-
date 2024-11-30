@@ -15,6 +15,7 @@
       flex-direction: row;
       gap: 2rem;
       width: 100%;
+      align-items: center;
     }
   
     h2 {
@@ -26,11 +27,6 @@
     }
   
     :global(body.dark-mode) {
-      .listing {
-        background-color: #333;
-        color: white;
-      }
-  
       h2 {
         color: white;
       }
