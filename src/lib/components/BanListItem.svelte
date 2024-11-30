@@ -18,13 +18,11 @@
     }
   
     h2 {
-      margin: 0;
+      color: white;
     }
-  
-    p.username {
-      margin: 0;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
+
+    p {
+      color: white;
     }
   
     :global(body.dark-mode) {
