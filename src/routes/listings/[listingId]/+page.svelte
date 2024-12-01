@@ -76,6 +76,10 @@
       alert("Failed to delete listing");
     }
   };
+
+  function handleReport() {
+        window.location.href = `/listings/${listing.listing_id}/report`;
+    }
 </script>
 
 <main>
@@ -89,7 +93,7 @@
             <button>Send Offer</button>
           {/if}
           {#if $tokenStore.variant == UserVariant.MODERATOR || $tokenStore.variant == UserVariant.BUYER}
-            <button>Report</button>
+            <button on:click={handleReport}>Report</button>
           {/if}
           {#if isOwner || $tokenStore.variant == UserVariant.MODERATOR}
             {#if isEditing}
