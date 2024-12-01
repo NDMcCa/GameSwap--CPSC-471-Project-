@@ -5,6 +5,7 @@
   import { setTokenStore, tokenStore } from "../../stores/tokenStore";
   import { UserVariant } from "$lib/models/UserVariant";
   import { page } from "$app/stores";
+  import type { SellerModel } from "$lib/models/SellerModel";
 
   const logout = async () => {
     await fetch("/api/logout", {
@@ -47,6 +48,11 @@
           <button on:click={() => goto("/listings/create")}
             >Create Listing</button
           >
+          <button
+            on:click={() =>
+              goto(`/sellers/${($tokenStore.user as SellerModel).seller_id}`)}
+            >My Profile</button
+          >
         {/if}
         {#if $tokenStore.variant == UserVariant.MODERATOR}
           <button on:click={() => goto("/moderator")}>Moderator Tools</button>
@@ -56,7 +62,6 @@
         <button on:click={() => goto("/login")}>Login</button>
         <button on:click={() => goto("/register")}>Register</button>
       {/if}
-      <button on:click={() => goto("/sellers")}>View Sellers</button>
       <button on:click={toggleTheme}>Mode</button>
     </div>
   {/if}

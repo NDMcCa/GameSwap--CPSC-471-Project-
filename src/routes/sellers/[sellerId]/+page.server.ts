@@ -1,8 +1,7 @@
 import { redirect, type ServerLoad } from "@sveltejs/kit";
 import { type TokenContent, verifyToken } from "$lib/jwt";
 import { getSellerById } from "$lib/controllers/userController";
-import { getGameListings, getGameListingsBySellerId } from "$lib/controllers/listingController";
-import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
+import { getGameListingsBySellerId } from "$lib/controllers/listingController";
 
 export const load: ServerLoad = async ({ cookies, params }) => {
   if (!params.sellerId) {

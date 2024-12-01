@@ -11,7 +11,7 @@
       <span>(Sold)</span>
     {/if}
   </h2>
-  <p class="username">{model.username}</p>
+  <a href={`/sellers/${model.seller_id}`} class="username">{model.username}</a>
   <div class="info-container">
     <span class="price">{model.price}</span>
     <span class="category">{model.category}</span>
@@ -46,10 +46,16 @@
     }
   }
 
-  p.username {
+  a.username {
     margin: 0;
     margin-top: 0.5rem;
     font-size: 0.9rem;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   div.info-container {

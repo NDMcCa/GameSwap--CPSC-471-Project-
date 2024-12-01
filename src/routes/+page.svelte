@@ -7,6 +7,7 @@
   import BuyerTransaction from "$lib/components/BuyerTransaction.svelte";
 
   import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
   import { setTokenStore, tokenStore } from "../stores/tokenStore";
   import { listingsStore, setListingsStore } from "../stores/listingsStore";
   import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
@@ -93,7 +94,10 @@
       type="text"
       placeholder={`Search by ${searchBy}${searchCategory.length > 0 ? ` in ${searchCategory}` : ""}${searchPlatform.length > 0 ? ` for ${searchPlatform}` : ""}...`}
     />
-    <button class="search" onclick={searchListings}>Search</button>
+    <button on:click={searchListings}>Search</button>
+    <button class="view-sellers-btn" on:click={() => goto("/sellers")}
+      >View Sellers</button
+    >
   </div>
   <div class="content-container">
     <div class="listings-container">
@@ -174,7 +178,7 @@
     button {
       margin-right: 1rem;
 
-      &.search {
+      &.view-sellers-btn {
         margin-right: 0;
       }
     }

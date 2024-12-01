@@ -116,7 +116,9 @@
       >
     </div>
     <div class="seller-container">
-      <span class="seller">{listing.username}</span>
+      <a class="seller" href={`/sellers/${listing.seller_id}`}
+        >{listing.username}</a
+      >
       <a class="email" href={`mailto:${listing.email}`}>{listing.email}</a>
       <span class="rating">{listing.avg_rating}/5</span>
       <span class="city">{listing.city}</span>
@@ -212,6 +214,15 @@
           background-color: rgb(111, 111, 228, 0.8);
         }
       }
+    }
+  }
+
+  a.seller {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 
