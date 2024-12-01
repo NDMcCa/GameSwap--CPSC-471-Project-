@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { UserVariant } from "$lib/models/UserVariant";
 import type { BuyerModel } from "$lib/models/BuyerModel";
 import type { ModeratorModel } from "$lib/models/ModeratorModel";
-import type { SellerModel } from "$lib/models/SellerModel";
+import type { BannedSellerModel, SellerModel } from "$lib/models/SellerModel";
 
 export type UserType = ModeratorModel | BuyerModel | SellerModel;
 
@@ -28,6 +28,20 @@ const authenticateUser = async (
 
     if (!(await bcrypt.compare(plaintextPassword, user.password_hash))) {
       return undefined;
+    }
+
+    if (userVariant === UserVariant.SELLER) {
+      const seller = user as SellerModel;
+      const banCheck = await pool.query(
+        "SELECT * FROM BAN_LIST WHERE target_seller = ?",
+        [seller.seller_id]
+      ); 
+
+      const bans = banCheck[0] as any[];
+      if (bans.length > 0) {
+        return undefined; // Seller is banned
+      }
+  
     }
 
     return users[0];
@@ -129,6 +143,55 @@ export const insertSeller = async (
   return insertUser(username, email, passwordHash, city, "SELLER") as Promise<
     SellerModel | undefined
   >;
+};
+
+export const getBannedUsers = async (
+): Promise<BannedSellerModel[] | undefined> => {
+  try {
+    const result = await pool.query(
+      `SELECT 
+         SELLER.username AS banned_user, 
+         SELLER.seller_id AS seller_id, 
+         MODERATOR.username AS banning_moderator
+       FROM 
+         BAN_LIST 
+       JOIN 
+         SELLER ON BAN_LIST.target_seller = SELLER.seller_id
+       JOIN 
+         MODERATOR ON BAN_LIST.banned_by = MODERATOR.moderator_id;`
+    );
+
+    return result[0] as BannedSellerModel[];
+  } catch (_) {
+    return undefined;
+  }
+};
+
+export const banUser = async (
+  banned_by: number,
+  target_seller: number
+): Promise<boolean> => {
+  try {
+    await pool.query("INSERT INTO BAN_LIST (banned_by, target_seller) VALUES (?, ?)", [banned_by, target_seller]);
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
+export const unbanUser = async (
+  target_seller: number
+): Promise<boolean> => {
+  try {
+    await pool.query("DELETE FROM BAN_LIST WHERE target_seller = ?", [target_seller]);
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 };
 
 export const getSellers = async (): Promise<
