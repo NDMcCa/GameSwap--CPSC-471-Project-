@@ -11,6 +11,17 @@ VALUES
     );
 
 INSERT INTO
+    SELLER (seller_id, password_hash, email, city, username)
+VALUES
+    (
+        2,
+        '$2b$10$9HDOA8kaxoo0aRWV5yoAbepbrPZTFArVeQHy9mSTdTgCgA9tJFQA2',
+        'test69@test.com',
+        'Edmonton',
+        'bannedseller'
+    );
+
+INSERT INTO
     BUYER (buyer_id, password_hash, email, city, username)
 VALUES
     (
@@ -42,6 +53,14 @@ VALUES
         '$2b$10$9HDOA8kaxoo0aRWV5yoAbepbrPZTFArVeQHy9mSTdTgCgA9tJFQA2',
         'test3@test.com',
         'defaultmod'
+    );
+
+INSERT INTO
+    BAN_LIST (banned_by, target_seller)
+VALUES
+    (
+        1,
+        2
     );
 
 -- Insert sample listings
