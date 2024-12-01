@@ -56,6 +56,7 @@
         <button on:click={() => goto("/login")}>Login</button>
         <button on:click={() => goto("/register")}>Register</button>
       {/if}
+      <button on:click={() => goto("/sellers")}>View Sellers</button>
       <button on:click={toggleTheme}>Mode</button>
     </div>
   {/if}
