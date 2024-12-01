@@ -18,3 +18,21 @@ export const insertReport = async (
       return undefined;
     }
   };
+
+
+export const deleteReport = async (
+    reportId: number
+    ): Promise<boolean> => {
+    try {
+      let result; 
+        result = await pool.query(
+          "DELETE FROM REPORT_LISTING WHERE report_id = ?",
+          [reportId]
+        );
+      
+  
+      return (result[0] as any).affectedRows > 0;
+    } catch (_) {
+      return false;
+    }
+};
