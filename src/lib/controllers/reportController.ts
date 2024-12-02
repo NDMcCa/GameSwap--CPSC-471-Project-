@@ -1,4 +1,5 @@
 import pool from "$lib/db";
+import type { RowDataPacket } from "mysql2";
 
 
 export const insertReport = async (
@@ -7,6 +8,15 @@ export const insertReport = async (
     written_for: number
   ): Promise<number | undefined> => {
     try {
+
+    const [rows] = await pool.query<RowDataPacket[]>(
+        "SELECT 1 FROM REPORT_LISTING WHERE written_by = ? AND written_for = ?",
+        [written_by, written_for]
+    );
+
+    if (rows.length > 0) {
+        return undefined;
+    }
       const result = await pool.query(
         "INSERT INTO REPORT_LISTING (description, written_by, written_for) VALUES (?, ?, ?)",
         [description, written_by, written_for]
