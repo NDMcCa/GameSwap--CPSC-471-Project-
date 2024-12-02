@@ -1,6 +1,6 @@
 <script lang="ts">
   import { setOffersStore, offersStore } from "../../stores/offersStore";
-  import type { ClearOfferRequest } from "$lib/models/ClearOfferRequest";
+  import type { ClearOfferRequest } from "$lib/models/OfferRequests";
   import type { JoinedOfferModel } from "$lib/models/SendsOfferModel";
 
   export let model: JoinedOfferModel;

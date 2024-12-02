@@ -13,6 +13,7 @@
     DeleteListingRequest,
     SaveListingRequest,
   } from "$lib/models/ListingRequests";
+  import type { SendOfferRequest } from "$lib/models/OfferRequests";
 
   setTokenStore($page.data.token);
 
@@ -78,8 +79,33 @@
   };
 
   function handleReport() {
-        window.location.href = `/listings/${listing.listing_id}/report`;
+    goto(`/listings/${listing.listing_id}/report`);
+  }
+
+  let isWritingOffer = false;
+  let offerComment = "";
+
+  const handleSendOffer = async () => {
+    const req: SendOfferRequest = {
+      sellerId: listing.seller_id,
+      offerComment,
+    };
+
+    const result = await fetch("/api/offers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req),
+    });
+
+    if (result.ok) {
+      isWritingOffer = false;
+      alert("Offer sent");
+    } else {
+      alert("You already have an offer on this listing");
     }
+  };
 </script>
 
 <main>
@@ -89,8 +115,15 @@
       <h1>{listing.title}</h1>
       {#if $tokenStore}
         <div class="options">
-          {#if $tokenStore.variant == UserVariant.BUYER}
-            <button>Send Offer</button>
+          {#if $tokenStore.variant == UserVariant.BUYER && !listing.is_sold}
+            {#if isWritingOffer}
+              <button on:click={() => (isWritingOffer = false)}>Cancel</button>
+              <button on:click={handleSendOffer}>Send Offer</button>
+            {:else}
+              <button on:click={() => (isWritingOffer = true)}
+                >Compose Offer</button
+              >
+            {/if}
           {/if}
           {#if $tokenStore.variant == UserVariant.MODERATOR || $tokenStore.variant == UserVariant.BUYER}
             <button on:click={handleReport}>Report</button>
@@ -109,6 +142,12 @@
         </div>
       {/if}
     </div>
+    {#if isWritingOffer}
+      <div class="offer-input-container">
+        <strong>Offer:</strong>
+        <input type="text" bind:value={offerComment} />
+      </div>
+    {/if}
     <div class="info-container">
       {#if isEditing}
         <input type="number" bind:value={listing.price} />
@@ -184,6 +223,16 @@
     margin-top: 2rem;
     min-width: 400px;
     background-color: white;
+  }
+
+  div.offer-input-container {
+    margin-bottom: 1.5rem;
+
+    input {
+      padding: 0.5rem;
+      border: 2px solid #ccc;
+      outline: none;
+    }
   }
 
   :global(body.dark-mode) {
