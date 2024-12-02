@@ -7,9 +7,6 @@
 
 
     setListingsStore($page.data.wishlistListings);
-
-    console.log("Wishlist Listings Data:", $page.data.wishlistListings);
-
 </script>
 
 
