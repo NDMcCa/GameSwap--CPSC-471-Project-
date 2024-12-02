@@ -13,6 +13,8 @@
     });
 
     setTokenStore(undefined);
+
+    goto('/');
   };
 
   const toggleTheme = () => {
