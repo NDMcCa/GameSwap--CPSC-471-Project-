@@ -224,3 +224,19 @@ export const getSellerById = async (
     return undefined;
   }
 };
+
+export const getBuyerById = async (
+  buyer_id: number
+): Promise<BuyerModel | undefined> => {
+  try {
+    const result = await pool.query(
+      `SELECT b.* FROM BUYER b WHERE b.buyer_id = ?`,
+      [buyer_id]
+    );
+
+    return (result[0] as BuyerModel[])[0];
+  } catch (_) {
+    return undefined;
+  }
+};
+
