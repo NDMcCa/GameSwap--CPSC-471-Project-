@@ -2,6 +2,7 @@ import { redirect, type ServerLoad } from "@sveltejs/kit";
 import { type TokenContent, verifyToken } from "$lib/jwt";
 import { UserVariant } from "$lib/models/UserVariant";
 import { getBuyerById } from "$lib/controllers/userController";
+import { getGameListingsByBuyerWishlist } from "$lib/controllers/listingController";
 
 export const load: ServerLoad = async ({ cookies, params }) => {
   const token = verifyToken<TokenContent>(cookies.get("token") ?? "");
@@ -26,6 +27,8 @@ export const load: ServerLoad = async ({ cookies, params }) => {
     throw redirect(303, "/" );
   }
 
+  const wishlistListings = await getGameListingsByBuyerWishlist(buyerId);
 
-  return { token, buyer};
+
+  return { token, wishlistListings};
 };

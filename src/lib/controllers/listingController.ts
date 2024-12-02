@@ -196,3 +196,27 @@ export const getReportedListings = async (): Promise<
     return undefined;
   }
 };
+
+export const getGameListingsByBuyerWishlist = async (
+  buyerId: number
+): Promise<JoinedGameListingModel[] | undefined> => {
+  try {
+    const result = await pool.query(`SELECT 
+          GL.*, 
+          S.*, 
+          GC.description AS category_description, 
+          GP.description AS platform_description
+       FROM WISHLIST_LISTING WL
+       JOIN GAME_LISTING GL ON WL.created_for = GL.listing_id
+       JOIN SELLER S ON GL.posted_by = S.seller_id
+       JOIN GAME_CATEGORY GC ON GL.category = GC.category_name
+       JOIN GAME_PLATFORM GP ON GL.platform = GP.platform_name
+       WHERE WL.created_by = ?`,
+      [buyerId]
+    );
+
+    return result[0] as JoinedGameListingModel[];
+  } catch (_) {
+    return undefined;
+  }
+};

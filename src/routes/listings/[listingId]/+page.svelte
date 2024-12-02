@@ -13,6 +13,7 @@
     DeleteListingRequest,
     SaveListingRequest,
   } from "$lib/models/ListingRequests";
+    import type { CreateWishlistListing } from "$lib/models/WishlistListing";
 
   setTokenStore($page.data.token);
 
@@ -23,6 +24,12 @@
     listing.seller_id === ($tokenStore?.user as SellerModel)?.seller_id;
 
   let isEditing = false;
+
+  const created_by = $page.data.token.user.buyer_id;
+  const created_for = $page.data.listing.listing_id;
+
+  let successMessage = "";
+  let errorMessage = "";
 
   const handleSave = async () => {
     const req: SaveListingRequest = {
@@ -80,6 +87,34 @@
   function handleReport() {
         window.location.href = `/listings/${listing.listing_id}/report`;
     }
+
+  const handleWishlistAdd = async (event: Event) => {
+      event.preventDefault();
+
+      try {
+        const req: CreateWishlistListing = {
+            created_by,
+            created_for
+        };
+
+        const res = await fetch("/api/wishlists", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req),
+        });
+
+        if (res.ok) {
+            successMessage = "Listing successfully added to wishlist";
+
+        } else {
+            errorMessage = "Failed to add item to wishlist";
+        }
+        } catch (_) {
+        errorMessage = "Create wishlist listing request failed";
+        }
+    };
 </script>
 
 <main>
@@ -91,6 +126,7 @@
         <div class="options">
           {#if $tokenStore.variant == UserVariant.BUYER}
             <button>Send Offer</button>
+            <button on:click={handleWishlistAdd}>Add to Wishlist</button>
           {/if}
           {#if $tokenStore.variant == UserVariant.MODERATOR || $tokenStore.variant == UserVariant.BUYER}
             <button on:click={handleReport}>Report</button>
@@ -174,6 +210,12 @@
       <p>{listing.description}</p>
     {/if}
   </section>
+
+  {#if errorMessage}
+        <p style="color: red;">{errorMessage}</p>
+    {:else if successMessage}
+        <p style="color: green;">{successMessage}</p>
+    {/if}
 </main>
 
 <style lang="scss">
