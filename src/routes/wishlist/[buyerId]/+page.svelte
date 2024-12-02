@@ -3,6 +3,7 @@
     import { redirect } from "@sveltejs/kit";
     import { listingsStore, setListingsStore } from "../../../stores/listingsStore";
     import ListingResult from "$lib/components/ListingResult.svelte";
+    import Nav from "$lib/components/Nav.svelte";
 
 
     setListingsStore($page.data.wishlistListings);
@@ -13,7 +14,7 @@
 
 
 <main>
-
+    <Nav />
     <h1>Wishlist</h1>
 
     {#if $listingsStore.length > 0}
