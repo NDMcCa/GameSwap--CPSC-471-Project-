@@ -5,6 +5,7 @@
   import { setTokenStore, tokenStore } from "../../stores/tokenStore";
   import { UserVariant } from "$lib/models/UserVariant";
   import { page } from "$app/stores";
+  import { setOffersStore } from "../../stores/offersStore";
   import type { SellerModel } from "$lib/models/SellerModel";
 
   const logout = async () => {
@@ -13,8 +14,9 @@
     });
 
     setTokenStore(undefined);
+    setOffersStore([]);
 
-    goto('/');
+    goto("/");
   };
 
   const toggleTheme = () => {

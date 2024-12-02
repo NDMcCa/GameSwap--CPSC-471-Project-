@@ -9,22 +9,20 @@
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import { setTokenStore, tokenStore } from "../stores/tokenStore";
+  import { setOffersStore, offersStore } from "../stores/offersStore";
   import { listingsStore, setListingsStore } from "../stores/listingsStore";
   import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
   import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
   import type { SearchListingRequest } from "$lib/models/SearchListingRequest";
-  import type { JoinedOfferModel } from "$lib/models/SendsOfferModel";
   import type { JoinedTransactionModel } from "$lib/models/TransactionModel";
   import type { BuyerModel } from "$lib/models/BuyerModel";
 
   setTokenStore($page.data.token);
-  setListingsStore($page.data.listings);
+  setListingsStore($page.data.listings ?? []);
+  setOffersStore($page.data.receivedOffers ?? []);
 
   const categories = $page.data.categories as GameCategoryModel[];
   const platforms = $page.data.platforms as GamePlatformModel[];
-  const receivedOffers = $page.data.receivedOffers as
-    | JoinedOfferModel[]
-    | undefined;
   const buyerTransactions = $page.data.buyerTransactions as
     | JoinedTransactionModel[]
     | undefined;
@@ -110,9 +108,9 @@
       {/if}
     </div>
     {#if $tokenStore}
-      {#if receivedOffers}
+      {#if $offersStore.length > 0}
         <div class="offers-container">
-          {#each receivedOffers as offer}
+          {#each $offersStore as offer}
             <Offer model={offer} />
           {/each}
         </div>
