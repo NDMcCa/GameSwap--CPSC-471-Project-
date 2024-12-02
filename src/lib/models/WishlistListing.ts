@@ -4,7 +4,8 @@ export interface CreateWishlistListing {
   }
 
 export interface DeleteWishlistListing {
-    wishlistId: number;
+    created_by: number;
+    created_for: number;
 }
   
 export type SaveWishlistListing = CreateWishlistListing & { wishlistId: number };
