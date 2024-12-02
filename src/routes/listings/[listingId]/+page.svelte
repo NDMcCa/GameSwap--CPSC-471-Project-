@@ -14,6 +14,7 @@
     SaveListingRequest,
   } from "$lib/models/ListingRequests";
     import type { CreateWishlistListing } from "$lib/models/WishlistListing";
+    import type { BuyerModel } from "$lib/models/BuyerModel";
 
   setTokenStore($page.data.token);
 
@@ -25,7 +26,8 @@
 
   let isEditing = false;
 
-  const created_by = $page.data.token.user.buyer_id;
+  
+  const created_by = ($tokenStore?.user as BuyerModel)?.buyer_id;
   const created_for = $page.data.listing.listing_id;
 
   let successMessage = "";
@@ -109,7 +111,7 @@
             successMessage = "Listing successfully added to wishlist";
 
         } else {
-            errorMessage = "Failed to add item to wishlist";
+            errorMessage = "You have already added this listing to your wishlist";
         }
         } catch (_) {
         errorMessage = "Create wishlist listing request failed";
