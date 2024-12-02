@@ -31,6 +31,7 @@
         });
 
         if (res.ok) {
+          listingsStore.update(listings => listings.filter(l => l.listing_id !== created_for));
           await goto(`/wishlist/${created_by}`);
 
         } else {
@@ -39,8 +40,6 @@
         } catch (_) {
           alert("Failed to remove the listing. Please try again.");
         }
-
-        location.reload();
     };
     }
 
