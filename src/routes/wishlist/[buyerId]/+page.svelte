@@ -2,6 +2,7 @@
     import { page } from "$app/stores";
     import { redirect } from "@sveltejs/kit";
     import { listingsStore, setListingsStore } from "../../../stores/listingsStore";
+    import ListingResult from "$lib/components/ListingResult.svelte";
 
 
     setListingsStore($page.data.wishlistListings);
@@ -17,7 +18,7 @@
 
     {#if $listingsStore.length > 0}
     {#each $listingsStore as listing}
-      <h1>{listing.title}</h1>
+    <ListingResult model={listing} />
     {/each}
   {:else}
     <h2>No listings on your wishlist</h2> 
