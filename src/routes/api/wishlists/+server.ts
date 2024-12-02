@@ -6,6 +6,8 @@ import type { RequestHandler } from "@sveltejs/kit";
 import type { CreateListingReport, CreateReportResponse, SaveListingReport } from "$lib/models/ListingReport";
 import { insertReport, deleteReport } from "$lib/controllers/reportController";
 import type { BuyerModel } from "$lib/models/BuyerModel";
+import type { CreateWishlistListing, CreateWishlistListingResponse, SaveWishlistListing } from "$lib/models/WishlistListing";
+import { deleteWishlistListing, insertWishlistListing } from "$lib/controllers/wishlistController";
   
   export const DELETE: RequestHandler = async ({ request, cookies }) => {
     const token = verifyToken<TokenContent>(cookies.get("token") ?? "");
@@ -21,10 +23,10 @@ import type { BuyerModel } from "$lib/models/BuyerModel";
       return notAuthorized;
     }
   
-    const body = (await request.json()) as SaveListingReport;
+    const body = (await request.json()) as SaveWishlistListing;
   
-    if (token.variant === UserVariant.MODERATOR) {
-      const result = await deleteReport(body.reportId);
+    if (token.variant === UserVariant.BUYER) {
+      const result = await deleteWishlistListing(body.created_by, body.created_for);
   
       if (result) {
         return new Response(JSON.stringify({ message: "Success" }), {
@@ -51,16 +53,15 @@ import type { BuyerModel } from "$lib/models/BuyerModel";
       });
     }
   
-    const body = (await request.json()) as CreateListingReport;
+    const body = (await request.json()) as CreateWishlistListing;
   
-    const result = await insertReport(
-      body.description,
-      body.written_by,
-      body.written_for,
+    const result = await insertWishlistListing(
+      body.created_by,
+      body.created_for,
     );
   
     if (result) {
-      const res: CreateReportResponse = {
+      const res: CreateWishlistListingResponse = {
         insertedId: result,
       };
   

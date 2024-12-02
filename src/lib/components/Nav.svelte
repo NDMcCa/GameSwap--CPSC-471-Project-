@@ -59,6 +59,9 @@
         {#if $tokenStore.variant == UserVariant.MODERATOR}
           <button on:click={() => goto("/moderator")}>Moderator Tools</button>
         {/if}
+        {#if $tokenStore.variant == UserVariant.BUYER}
+          <button on:click={() => goto(`/wishlist/${$page.data.token.user.buyer_id}`)}>View Wishlist</button>
+        {/if}
         <button on:click={logout}>Logout</button>
       {:else}
         <button on:click={() => goto("/login")}>Login</button>
