@@ -1,4 +1,5 @@
 import pool from "$lib/db";
+import type { SaveListingReport } from "$lib/models/ListingReport";
 import type { RowDataPacket } from "mysql2";
 
 
@@ -46,3 +47,16 @@ export const deleteReport = async (
       return false;
     }
 };
+
+export const getReports = async (): Promise<SaveListingReport[] | undefined> => {
+    try {
+      const [rows] = await pool.query<[]>(
+        "SELECT * FROM REPORT_LISTING"
+      );
+  
+      return rows as SaveListingReport[];
+    } catch (err) {
+      console.error(err);
+      return undefined;
+    }
+  };

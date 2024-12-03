@@ -8,13 +8,15 @@
     import type { BannedSellerModel, SellerModel } from "$lib/models/SellerModel";
     import ListingResult from "$lib/components/ListingResult.svelte";
     import { setTokenStore } from "../../stores/tokenStore";
+    import type { SaveListingReport } from "$lib/models/ListingReport";
+  import ReportedListingItem from "$lib/components/ReportedListingItem.svelte";
 
     setTokenStore($page.data.token);
 
     let banned = $page.data.banned as BannedSellerModel[];
     let sellers = $page.data.sellers as SellerModel[];
     // const reports = $page.data.banned as [];
-    const reports: string | any[] = []; // Temporary placeholder code to avoid error
+    let reports = $page.data.reports as SaveListingReport[];
 
     const unban = async (user: BannedSellerModel) => {
         try {
@@ -81,8 +83,13 @@
                 <div class="container">
                 {#if reports.length > 0}
                     {#each reports as reported_listing} 
-                        <ListingResult model={reported_listing} 
-                        /> <!-- Temporary placeholder code to avoid error-->
+                        <ReportedListingItem 
+                            description={reported_listing.description},
+                            written_for={reported_listing.written_for},
+                            written_by={reported_listing.written_by},
+                            reportId={reported_listing.reportId}
+     
+                        />
                     {/each}
                 {:else}
                     <p>No listings found.</p>

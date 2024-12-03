@@ -201,19 +201,6 @@ export const getGameListingPlatforms = async (): Promise<
   }
 };
 
-// Placeholder, complete later
-export const getReportedListings = async (): Promise<
-  GamePlatformModel[] | undefined
-> => {
-  try {
-    const result = await pool.query("SELECT * FROM GAME_PLATFORM");
-
-    return result[0] as GamePlatformModel[];
-  } catch (_) {
-    return undefined;
-  }
-};
-
 export const getGameListingsByBuyerWishlist = async (
   buyerId: number
 ): Promise<JoinedGameListingModel[] | undefined> => {
