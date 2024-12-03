@@ -15,3 +15,20 @@ export const getBuyerTransactions = async (
     return undefined;
   }
 };
+
+export const insertTransaction = async (
+  recordedSeller: number,
+  recordedBuyer: number,
+  forListing: number
+): Promise<boolean> => {
+  try {
+    const [result] = await pool.query(
+      "INSERT INTO TRANSACTION (recorded_seller, recorded_buyer, for_listing) VALUES (?, ?, ?)",
+      [recordedSeller, recordedBuyer, forListing]
+    );
+
+    return (result as any).affectedRows > 0;
+  } catch (_) {
+    return false;
+  }
+};

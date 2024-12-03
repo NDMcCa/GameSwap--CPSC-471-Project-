@@ -5,6 +5,7 @@
   import { goto } from "$app/navigation";
   import { setTokenStore, tokenStore } from "../../../stores/tokenStore";
   import { UserVariant } from "$lib/models/UserVariant";
+  import { offersStore, setOffersStore } from "../../../stores/offersStore";
   import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
   import type { SellerModel } from "$lib/models/SellerModel";
   import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
@@ -14,9 +15,14 @@
     SaveListingRequest,
   } from "$lib/models/ListingRequests";
   import type { SendOfferRequest } from "$lib/models/OfferRequests";
+  import type { JoinedOfferModel } from "$lib/models/SendsOfferModel";
+  import type { ConfirmTransactionRequest } from "$lib/models/TransactionRequests";
 
   setTokenStore($page.data.token);
 
+  const sellerOffers = $page.data.sellerOffers as
+    | JoinedOfferModel[]
+    | undefined;
   const categories = $page.data.categories as GameCategoryModel[];
   const platforms = $page.data.platforms as GamePlatformModel[];
   const listing = $page.data.listing as JoinedGameListingModel;
@@ -106,6 +112,46 @@
       alert("You already have an offer on this listing");
     }
   };
+
+  let isComposingTransaction = false;
+  let selectedBuyer: number;
+
+  $: selectedBuyerOfferComment = sellerOffers?.find(
+    (offer) => offer.buyer_id === selectedBuyer
+  )?.offer_comment;
+
+  const openComposeTransaction = () => {
+    if (sellerOffers && sellerOffers.length > 0) {
+      isComposingTransaction = true;
+    } else {
+      alert("No offers to compose transaction with");
+    }
+  };
+
+  const handleConfirmTransaction = async () => {
+    const req: ConfirmTransactionRequest = {
+      forListing: listing.listing_id,
+      withBuyer: selectedBuyer,
+    };
+
+    const result = await fetch("/api/transactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req),
+    });
+
+    if (result.ok) {
+      listing.is_sold = true;
+      setOffersStore($offersStore.filter((o) => o.buyer_id !== selectedBuyer));
+      isComposingTransaction = false;
+
+      alert("Transaction confirmed");
+    } else {
+      alert("Failed to confirm transaction");
+    }
+  };
 </script>
 
 <main>
@@ -117,7 +163,9 @@
         <div class="options">
           {#if $tokenStore.variant == UserVariant.BUYER && !listing.is_sold}
             {#if isWritingOffer}
-              <button on:click={() => (isWritingOffer = false)}>Cancel</button>
+              <button on:click={() => (isWritingOffer = false)}
+                >Cancel Offer</button
+              >
               <button on:click={handleSendOffer}>Send Offer</button>
             {:else}
               <button on:click={() => (isWritingOffer = true)}
@@ -136,8 +184,16 @@
             {/if}
             <button on:click={handleDelete}>Delete</button>
           {/if}
-          {#if isOwner}
-            <button>Mark as Sold</button>
+          {#if isOwner && !listing.is_sold}
+            {#if isComposingTransaction}
+              <button on:click={() => (isComposingTransaction = false)}
+                >Cancel Transaction</button
+              >
+            {:else}
+              <button on:click={openComposeTransaction}
+                >Compose Transaction</button
+              >
+            {/if}
           {/if}
         </div>
       {/if}
@@ -147,6 +203,22 @@
         <strong>Offer:</strong>
         <input type="text" bind:value={offerComment} />
       </div>
+    {/if}
+    {#if isComposingTransaction && sellerOffers}
+      <div class="transaction-input-container">
+        <div>
+          <strong>Offer From:</strong>
+          <select bind:value={selectedBuyer}>
+            {#each sellerOffers as offer}
+              <option value={offer.buyer_id}>{offer.username}</option>
+            {/each}
+          </select>
+        </div>
+        <button on:click={handleConfirmTransaction}>Confirm Transaction</button>
+      </div>
+      <p class="selected-buyer-comment">
+        {selectedBuyerOfferComment}
+      </p>
     {/if}
     <div class="info-container">
       {#if isEditing}
@@ -235,6 +307,40 @@
     }
   }
 
+  p.selected-buyer-comment {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  div.transaction-input-container {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    select {
+      padding: 0.5rem;
+      border: 2px solid #ccc;
+      outline: none;
+    }
+
+    button {
+      $color: rgb(75, 163, 24);
+
+      padding: 0.5rem;
+      border: none;
+      background-color: $color;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: darken($color, 10%);
+      }
+    }
+  }
+
   :global(body.dark-mode) {
     section {
       background-color: #333;
@@ -249,6 +355,7 @@
 
     h1 {
       margin: 0;
+      margin-right: 1rem;
     }
 
     div.options {

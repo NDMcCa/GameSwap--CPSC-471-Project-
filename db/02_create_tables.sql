@@ -142,7 +142,7 @@ CREATE TABLE
         recorded_buyer INT NULL,
         for_listing INT NULL,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE (recorded_seller, recorded_buyer, for_listing),
+        UNIQUE (recorded_seller, for_listing),
         FOREIGN KEY (recorded_seller) REFERENCES SELLER (seller_id) ON DELETE SET NULL,
         FOREIGN KEY (recorded_buyer) REFERENCES BUYER (buyer_id) ON DELETE SET NULL,
         FOREIGN KEY (for_listing) REFERENCES GAME_LISTING (listing_id) ON DELETE SET NULL

@@ -39,7 +39,6 @@ export const deleteOffer = async (
   sellerId: number
 ): Promise<boolean> => {
   try {
-    console.log(buyerId, sellerId);
     const [result] = await pool.query(
       "DELETE FROM SENDS_OFFER_TO WHERE buyer = ? AND seller = ?",
       [buyerId, sellerId]
