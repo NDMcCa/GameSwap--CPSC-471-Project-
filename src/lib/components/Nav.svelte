@@ -6,7 +6,9 @@
   import { UserVariant } from "$lib/models/UserVariant";
   import { page } from "$app/stores";
   import { setOffersStore } from "../../stores/offersStore";
+  import { onMount } from "svelte";
   import type { SellerModel } from "$lib/models/SellerModel";
+  import { browser } from "$app/environment";
 
   const logout = async () => {
     await fetch("/api/logout", {
@@ -19,9 +21,30 @@
     goto("/");
   };
 
-  const toggleTheme = () => {
-    window.document.body.classList.toggle("dark-mode");
-  };
+  let currentMode: "light" | "dark";
+  let updateTheme: () => void;
+
+  if (browser) {
+    currentMode = localStorage.getItem("mode") === "dark" ? "dark" : "light";
+
+    updateTheme = () => {
+      if (currentMode === "light") {
+        currentMode = "dark";
+        window.document.body.classList.add("dark-mode");
+      } else {
+        currentMode = "light";
+        window.document.body.classList.remove("dark-mode");
+      }
+
+      localStorage.setItem("mode", currentMode);
+    };
+
+    onMount(() => {
+      if (currentMode === "dark") {
+        window.document.body.classList.add("dark-mode");
+      }
+    });
+  }
 </script>
 
 <div class="top-bar">
@@ -40,7 +63,7 @@
         <button on:click={() => goto("/login")}>Login</button>
         <button on:click={() => goto("/register")}>Register</button>
       {/if}
-      <button on:click={toggleTheme}>Mode</button>
+      <button on:click={updateTheme}>Mode</button>
     </div>
   {:else}
     <div class="user-container">
@@ -62,14 +85,17 @@
           <button on:click={() => goto("/moderator")}>Moderator Tools</button>
         {/if}
         {#if $tokenStore.variant == UserVariant.BUYER}
-          <button on:click={() => goto(`/wishlist/${$page.data.token.user.buyer_id}`)}>View Wishlist</button>
+          <button
+            on:click={() => goto(`/wishlist/${$page.data.token.user.buyer_id}`)}
+            >View Wishlist</button
+          >
         {/if}
         <button on:click={logout}>Logout</button>
       {:else}
         <button on:click={() => goto("/login")}>Login</button>
         <button on:click={() => goto("/register")}>Register</button>
       {/if}
-      <button on:click={toggleTheme}>Mode</button>
+      <button on:click={updateTheme}>Mode</button>
     </div>
   {/if}
 </div>
