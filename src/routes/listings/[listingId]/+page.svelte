@@ -17,6 +17,8 @@
   import type { SendOfferRequest } from "$lib/models/OfferRequests";
   import type { JoinedOfferModel } from "$lib/models/SendsOfferModel";
   import type { ConfirmTransactionRequest } from "$lib/models/TransactionRequests";
+  import type { CreateWishlistListing } from "$lib/models/WishlistListing";
+  import type { BuyerModel } from "$lib/models/BuyerModel";
 
   setTokenStore($page.data.token);
 
@@ -30,6 +32,12 @@
     listing.seller_id === ($tokenStore?.user as SellerModel)?.seller_id;
 
   let isEditing = false;
+
+  const created_by = ($tokenStore?.user as BuyerModel)?.buyer_id;
+  const created_for = $page.data.listing.listing_id;
+
+  let successMessage = "";
+  let errorMessage = "";
 
   const handleSave = async () => {
     const req: SaveListingRequest = {
@@ -152,6 +160,33 @@
       alert("Failed to confirm transaction");
     }
   };
+
+  const handleWishlistAdd = async (event: Event) => {
+    event.preventDefault();
+
+    try {
+      const req: CreateWishlistListing = {
+        created_by,
+        created_for,
+      };
+
+      const res = await fetch("/api/wishlists", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(req),
+      });
+
+      if (res.ok) {
+        successMessage = "Listing successfully added to wishlist";
+      } else {
+        errorMessage = "You have already added this listing to your wishlist";
+      }
+    } catch (_) {
+      errorMessage = "Create wishlist listing request failed";
+    }
+  };
 </script>
 
 <main>
@@ -172,6 +207,10 @@
                 >Compose Offer</button
               >
             {/if}
+          {/if}
+          {#if $tokenStore.variant == UserVariant.BUYER}
+            <button>Send Offer</button>
+            <button on:click={handleWishlistAdd}>Add to Wishlist</button>
           {/if}
           {#if $tokenStore.variant == UserVariant.MODERATOR || $tokenStore.variant == UserVariant.BUYER}
             <button on:click={handleReport}>Report</button>
@@ -285,6 +324,12 @@
       <p>{listing.description}</p>
     {/if}
   </section>
+
+  {#if errorMessage}
+    <p style="color: red;">{errorMessage}</p>
+  {:else if successMessage}
+    <p style="color: green;">{successMessage}</p>
+  {/if}
 </main>
 
 <style lang="scss">
