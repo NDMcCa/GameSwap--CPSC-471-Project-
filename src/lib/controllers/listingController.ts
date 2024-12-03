@@ -72,7 +72,8 @@ export const getGameListingsBySellerId = async (
   sellerId: number
 ): Promise<JoinedGameListingModel[] | undefined> => {
   try {
-    const result = await pool.query(`SELECT GAME_LISTING.*, SELLER.*, GAME_CATEGORY.description AS category_description, GAME_PLATFORM.description AS platform_description
+    const result = await pool.query(
+      `SELECT GAME_LISTING.*, SELLER.*, GAME_CATEGORY.description AS category_description, GAME_PLATFORM.description AS platform_description
                                      FROM GAME_LISTING JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
                                       WHERE SELLER.seller_id = ?`,
       [sellerId]
@@ -160,6 +161,22 @@ export const insertGameListing = async (
   }
 };
 
+export const markGameListingAsSold = async (
+  listingId: number,
+  sellerId: number
+): Promise<boolean> => {
+  try {
+    const result = await pool.query(
+      "UPDATE GAME_LISTING SET is_sold = TRUE WHERE listing_id = ? AND posted_by = ?",
+      [listingId, sellerId]
+    );
+
+    return (result[0] as any).affectedRows > 0;
+  } catch (_) {
+    return false;
+  }
+};
+
 export const getGameListingCategories = async (): Promise<
   GameCategoryModel[] | undefined
 > => {
@@ -201,7 +218,8 @@ export const getGameListingsByBuyerWishlist = async (
   buyerId: number
 ): Promise<JoinedGameListingModel[] | undefined> => {
   try {
-    const result = await pool.query(`SELECT 
+    const result = await pool.query(
+      `SELECT 
           GL.*, 
           S.*, 
           GC.description AS category_description, 
