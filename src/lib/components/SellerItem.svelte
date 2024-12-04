@@ -32,39 +32,33 @@
   </div>
 </div>
 
-<style>
-  .seller-card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 16px;
-    margin: 12px 0;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+<style lang="scss">
+  h2 {
+    margin: 0;
+    margin-bottom: 0.5rem;
     text-decoration: none;
-    cursor: pointer;
+
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 
-  .seller-card h2 {
-    margin-bottom: 8px;
-    color: #333;
-    text-decoration: N;
+  div.seller-card {
+    background-color: white;
+    padding: 1rem;
+
+    div.info-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
   }
 
-  .info-container {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    color: #555;
-  }
-
-  .info-container span {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .rating {
-    font-weight: bold;
-    color: teal;
+  :global(body.dark-mode) {
+    div.seller-card {
+      background-color: #333;
+    }
   }
 </style>

@@ -201,6 +201,7 @@
               <button on:click={() => (isWritingOffer = false)}
                 >Cancel Offer</button
               >
+              <button on:click={handleSendOffer}>Send Offer</button>
             {:else}
               <button on:click={() => (isWritingOffer = true)}
                 >Compose Offer</button

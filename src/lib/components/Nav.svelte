@@ -2,10 +2,12 @@
   import "../../app.scss";
 
   import { goto } from "$app/navigation";
+  import { browser } from "$app/environment";
   import { setTokenStore, tokenStore } from "../../stores/tokenStore";
   import { UserVariant } from "$lib/models/UserVariant";
   import { page } from "$app/stores";
   import { setOffersStore } from "../../stores/offersStore";
+  import { onMount } from "svelte";
   import type { SellerModel } from "$lib/models/SellerModel";
 
   const logout = async () => {
@@ -19,9 +21,30 @@
     goto("/");
   };
 
-  const toggleTheme = () => {
-    window.document.body.classList.toggle("dark-mode");
-  };
+  let toggleTheme: () => void;
+
+  if (browser) {
+    let currentMode: "light" | "dark" =
+      sessionStorage.getItem("mode") === "dark" ? "dark" : "light";
+
+    toggleTheme = () => {
+      if (currentMode === "light") {
+        currentMode = "dark";
+        window.document.body.classList.add("dark-mode");
+      } else {
+        currentMode = "light";
+        window.document.body.classList.remove("dark-mode");
+      }
+
+      sessionStorage.setItem("mode", currentMode);
+    };
+
+    onMount(() => {
+      if (currentMode === "dark") {
+        window.document.body.classList.add("dark-mode");
+      }
+    });
+  }
 </script>
 
 <div class="top-bar">
@@ -62,7 +85,10 @@
           <button on:click={() => goto("/moderator")}>Moderator Tools</button>
         {/if}
         {#if $tokenStore.variant == UserVariant.BUYER}
-          <button on:click={() => goto(`/wishlist/${$page.data.token.user.buyer_id}`)}>View Wishlist</button>
+          <button
+            on:click={() => goto(`/wishlist/${$page.data.token.user.buyer_id}`)}
+            >View Wishlist</button
+          >
         {/if}
         <button on:click={logout}>Logout</button>
       {:else}

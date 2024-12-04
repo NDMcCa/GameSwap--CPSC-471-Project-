@@ -10,8 +10,8 @@
 
 <main>
   <Nav />
+
   <div>
-    <h1>Sellers:</h1>
     {#if $sellersStore.length > 0}
       {#each $sellersStore as seller}
         <SellerItem model={seller} />
@@ -21,3 +21,14 @@
     {/if}
   </div>
 </main>
+
+<style lang="scss">
+  div {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+  }
+</style>

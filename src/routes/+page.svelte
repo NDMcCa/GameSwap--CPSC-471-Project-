@@ -133,24 +133,30 @@
   div.content-container {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100lvw;
+    overflow-x: hidden;
   }
 
   div.transactions-container,
   div.offers-container {
+    flex: 0.5;
     border-left: 1px solid black;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-    min-width: 200px;
+    border-bottom: 1px solid black;
+
+    & > :global(*) {
+      margin-bottom: 1rem;
+    }
   }
 
   div.listings-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
+    flex: 1;
+    overflow-x: hidden;
+
+    & > :global(*) {
+      margin-bottom: 1rem;
+    }
   }
 
   div.search-container {
