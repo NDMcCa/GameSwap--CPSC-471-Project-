@@ -60,11 +60,17 @@
         {/if}
         {#if $tokenStore.variant == UserVariant.MODERATOR}
           <button on:click={() => goto("/moderator")}>Moderator Tools</button>
+          <button on:click={() =>goto(`/profile/${$page.data.token.user.moderator_id}`)}>Edit Profile</button>
         {/if}
         {#if $tokenStore.variant == UserVariant.BUYER}
           <button on:click={() => goto(`/wishlist/${$page.data.token.user.buyer_id}`)}>View Wishlist</button>
         {/if}
         <button on:click={logout}>Logout</button>
+        {#if $tokenStore.variant == UserVariant.SELLER}
+          <button on:click={() =>goto(`/profile/${$page.data.token.user.seller_id}`)}>Edit Profile</button>
+        {:else if $tokenStore.variant == UserVariant.BUYER}
+          <button on:click={() => goto(`/profile/${$page.data.token.user.buyer_id}`)}>Edit Profile</button>
+        {/if}
       {:else}
         <button on:click={() => goto("/login")}>Login</button>
         <button on:click={() => goto("/register")}>Register</button>
