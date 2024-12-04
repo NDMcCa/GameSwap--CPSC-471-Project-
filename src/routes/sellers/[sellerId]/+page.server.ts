@@ -5,6 +5,7 @@ import { getGameListingsBySellerId } from "$lib/controllers/listingController";
 
 export const load: ServerLoad = async ({ cookies, params }) => {
   if (!params.sellerId) {
+    console.log(params.sellerId);
     throw redirect(400, "/");
   }
 

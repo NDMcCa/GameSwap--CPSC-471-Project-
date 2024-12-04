@@ -8,15 +8,14 @@
     import type { BannedSellerModel, SellerModel } from "$lib/models/SellerModel";
     import ListingResult from "$lib/components/ListingResult.svelte";
     import { setTokenStore } from "../../stores/tokenStore";
-    import type { SaveListingReport } from "$lib/models/ListingReport";
-  import ReportedListingItem from "$lib/components/ReportedListingItem.svelte";
+    import type { SaveListingReport, ShowListingReport } from "$lib/models/ListingReport";
+    import ReportedListingItem from "$lib/components/ReportedListingItem.svelte";
 
     setTokenStore($page.data.token);
 
     let banned = $page.data.banned as BannedSellerModel[];
     let sellers = $page.data.sellers as SellerModel[];
-    // const reports = $page.data.banned as [];
-    let reports = $page.data.reports as SaveListingReport[];
+    let reports = $page.data.reports as ShowListingReport[];
 
     const unban = async (user: BannedSellerModel) => {
         try {
@@ -74,25 +73,7 @@
                         </div>
                     {/each}
                 {:else}
-                    <p>No listings found.</p>
-                {/if}
-            </div>
-        </div>
-        <div class="reports">
-            <h2>Listing Reports</h2>
-                <div class="container">
-                {#if reports.length > 0}
-                    {#each reports as reported_listing} 
-                        <ReportedListingItem 
-                            description={reported_listing.description},
-                            written_for={reported_listing.written_for},
-                            written_by={reported_listing.written_by},
-                            reportId={reported_listing.reportId}
-     
-                        />
-                    {/each}
-                {:else}
-                    <p>No listings found.</p>
+                    <p>No banned sellers found.</p>
                 {/if}
             </div>
         </div>
@@ -109,6 +90,29 @@
                             />
                             <button on:click={() => ban(sellers_usr)}>Ban</button>
                         </div>
+                    {/each}
+                {:else}
+                    <p>No active sellers found.</p>
+                {/if}
+            </div>
+        </div>
+        <div class="reports">
+            <h2>Listing Reports</h2>
+                <div class="container">
+                {#if reports.length > 0}
+                    {#each reports as reported_listing} 
+                    <div class="mod-list-item">
+                        <ReportedListingItem 
+                            description={reported_listing.description},
+                            written_for={reported_listing.written_for},
+                            written_by={reported_listing.written_by},
+                            report_id={reported_listing.report_id}
+                            written_by_username={reported_listing.written_by_username}
+                            seller_username={reported_listing.seller_username}
+                            seller_id={reported_listing.seller_id}
+                            game_title={reported_listing.game_title}
+                        />
+                    </div>
                     {/each}
                 {:else}
                     <p>No listings found.</p>

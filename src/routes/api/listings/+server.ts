@@ -9,6 +9,7 @@ import type {
   CreateListingRequest,
   SaveListingRequest,
 } from "$lib/models/ListingRequests";
+    import type { ShowListingReport } from "$lib/models/ListingReport";
 import type { SellerModel } from "$lib/models/SellerModel";
 import type { CreateListingResponse } from "$lib/models/CreateListingResponse";
 import type { SearchListingRequest } from "$lib/models/SearchListingRequest";
