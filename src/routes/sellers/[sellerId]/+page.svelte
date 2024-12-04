@@ -25,7 +25,11 @@
     <div class="seller-details">
       <h3>{seller.city}</h3>
       <h3><a href={`mailto:${seller.email}`}>{seller.email}</a></h3>
-      <h3>Average Rating: {seller.avg_rating}</h3>
+      {#if seller.avg_rating}
+        <h3>Average Rating: {seller.avg_rating}</h3>
+      {:else}
+        <h3>No ratings yet</h3>
+      {/if}
       {#if $tokenStore && $tokenStore.variant === "BUYER"}
         <button on:click={() => goto(`../../rating/${seller.seller_id}`)}>Rate</button>
       {/if}

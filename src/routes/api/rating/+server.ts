@@ -3,7 +3,7 @@ import { verifyToken, type TokenContent } from "$lib/jwt";
 import { UserVariant } from "$lib/models/UserVariant";
 import type { RequestHandler } from "@sveltejs/kit";
 import type { CreateRatingResponse, CreateSellerRating } from "$lib/models/SellerRating";
-import { insertRating } from "$lib/controllers/userController";
+import { insertRating, updateAverageRating } from "$lib/controllers/userController";
   
   
   export const POST: RequestHandler = async ({ request, cookies }) => {
@@ -21,6 +21,12 @@ import { insertRating } from "$lib/controllers/userController";
       body.rating,
       body.description,
       body.written_by,
+      body.written_for
+    );
+
+    // Required to update the average rating of the seller right away
+    // Checking for success is unimportant as the average will eventually update anyway
+    const result2 = await updateAverageRating(
       body.written_for
     );
   

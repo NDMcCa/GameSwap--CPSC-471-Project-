@@ -81,8 +81,6 @@
 
   {#if errorMessage}
       <p style="color: red;">{errorMessage}</p>
-  {:else if successMessage}
-      <p style="color: green;">{successMessage}</p>
   {/if}
   </form>
   </div>
@@ -91,7 +89,7 @@
 
 <style>
   button {
-      background-color: #FFCCCB;
+      background-color: #fff;
   }
 
   #textbox {

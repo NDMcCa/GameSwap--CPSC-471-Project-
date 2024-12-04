@@ -318,3 +318,22 @@ export const insertRating = async (
     return undefined;
   }
 }
+
+export const updateAverageRating = async (
+  seller_id: number
+): Promise<boolean> => {
+  try {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      "SELECT AVG(rating) AS avg_rating FROM SELLER_REVIEW WHERE written_for = ?",
+      [seller_id]
+    );
+
+    const avgRating = (rows[0] as any).avg_rating as number;
+
+    await pool.query("UPDATE SELLER SET avg_rating = ? WHERE seller_id = ?", [avgRating, seller_id]);
+
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
