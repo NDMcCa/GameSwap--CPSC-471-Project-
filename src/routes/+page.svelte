@@ -93,7 +93,7 @@
       placeholder={`Search by ${searchBy}${searchCategory.length > 0 ? ` in ${searchCategory}` : ""}${searchPlatform.length > 0 ? ` for ${searchPlatform}` : ""}...`}
     />
     <button on:click={searchListings}>Search</button>
-    <button class="view-sellers-btn" on:click={() => goto("/sellers")}
+    <button class="view-sellers-btn" on:click={() => goto("../sellers")}
       >View Sellers</button
     >
   </div>

@@ -1,4 +1,5 @@
 import pool from "$lib/db";
+import type { SaveListingReport, ShowListingReport } from "$lib/models/ListingReport";
 import type { RowDataPacket } from "mysql2";
 
 
@@ -46,3 +47,68 @@ export const deleteReport = async (
       return false;
     }
 };
+
+export const getReportByID = async (
+  reportId: number
+  ): Promise<ShowListingReport | undefined> => {
+    try {
+      const [rows] = await pool.query<RowDataPacket[]>(
+        `SELECT 
+          RL.report_id AS reportId,
+          RL.description,
+          RL.written_by,
+          RL.written_for,
+          B.username AS written_by_username,
+          S.username AS seller_username,
+          S.seller_id,
+          GL.title AS game_title
+            FROM 
+              REPORT_LISTING RL
+            LEFT JOIN 
+              BUYER B ON RL.written_by = B.buyer_id
+            INNER JOIN 
+              GAME_LISTING GL ON RL.written_for = GL.listing_id
+            INNER JOIN 
+              SELLER S ON GL.posted_by = S.seller_id
+            WHERE RL.report_id = ?`,
+        [reportId]
+      );
+  
+      if (rows.length > 0) {
+        return rows[0] as ShowListingReport;
+      }
+      return undefined;
+    } catch (err) {
+      console.error(err);
+      return undefined;
+    }
+  };
+
+  export const getReports= async (): Promise<ShowListingReport[] | undefined> => {
+    try {
+      const [rows] = await pool.query<[]>(
+        `SELECT 
+          RL.report_id AS reportId,
+          RL.description,
+          RL.written_by,
+          RL.written_for,
+          B.username AS written_by_username,
+          S.username AS seller_username,
+          S.seller_id,
+          GL.title AS game_title
+            FROM 
+              REPORT_LISTING RL
+            LEFT JOIN 
+              BUYER B ON RL.written_by = B.buyer_id
+            INNER JOIN 
+              GAME_LISTING GL ON RL.written_for = GL.listing_id
+            INNER JOIN 
+              SELLER S ON GL.posted_by = S.seller_id`
+      );
+  
+      return rows as ShowListingReport[];
+    } catch (err) {
+      console.error(err);
+      return undefined;
+    }
+  };

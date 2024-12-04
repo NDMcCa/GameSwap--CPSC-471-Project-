@@ -3,7 +3,7 @@ import { verifyToken, type TokenContent } from "$lib/jwt";
 import { UserVariant } from "$lib/models/UserVariant";
 import type { SellerModel } from "$lib/models/SellerModel";
 import type { RequestHandler } from "@sveltejs/kit";
-import type { CreateListingReport, CreateReportResponse, SaveListingReport } from "$lib/models/ListingReport";
+import type { CreateListingReport, CreateReportResponse, ShowListingReport } from "$lib/models/ListingReport";
 import { insertReport, deleteReport } from "$lib/controllers/reportController";
 import type { BuyerModel } from "$lib/models/BuyerModel";
   
@@ -21,10 +21,10 @@ import type { BuyerModel } from "$lib/models/BuyerModel";
       return notAuthorized;
     }
   
-    const body = (await request.json()) as SaveListingReport;
+    const body = (await request.json()) as ShowListingReport;
   
     if (token.variant === UserVariant.MODERATOR) {
-      const result = await deleteReport(body.reportId);
+      const result = await deleteReport(body.report_id);
   
       if (result) {
         return new Response(JSON.stringify({ message: "Success" }), {
