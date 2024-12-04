@@ -1,20 +1,20 @@
 <script lang="ts">
-    import "../../../app.scss";
+    import "../../app.scss";
   
     import { goto } from "$app/navigation";
     import { emailRegex } from "$lib/regex";
     import type { EditProfileRequest } from "$lib/models/EditProfileRequest";
-    import { setTokenStore } from "../../../stores/tokenStore";
+    import { setTokenStore } from "../../stores/tokenStore";
     import { page } from "$app/stores";
 
     setTokenStore($page.data.token);
+
+    let user = $page.data.user;
 
     let city: string | undefined;
     let email = ""; 
     let userType = $page.data.token.variant;
     let errorMessage = "";
-
-    console.log(userType);
     
     const handleSubmit = async (email: string | undefined, city: string | undefined) => {
   
@@ -69,10 +69,12 @@
       <form on:submit={() => handleSubmit(email, city)}>
   
         <label for="email">Email</label>
+        <p style="font-size: 0.8em;">(Current: {user?.email})</p>
         <input type="email" id="email" name="email" bind:value={email} />
         
         {#if userType !== "MODERATOR"}
           <label for="city">City</label>
+          <p style="font-size: 0.8em;">(Current: {user?.city})</p>
           <input type="text" id="city" name="city" bind:value={city} />
         {/if}
   

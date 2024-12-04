@@ -240,6 +240,21 @@ export const getBuyerById = async (
   }
 };
 
+export const getModeratorById = async (
+  moderator_id: number
+): Promise<ModeratorModel | undefined> => {
+  try {
+    const result = await pool.query(
+      `SELECT m.* FROM MODERATOR m WHERE m.moderator_id = ?`,
+      [moderator_id]
+    );
+
+    return (result[0] as ModeratorModel[])[0];
+  } catch (_) {
+    return undefined;
+  }
+};
+
 export const editUser = async (
   user_id: number,
   type: "BUYER" | "SELLER" | "MODERATOR",
@@ -247,34 +262,31 @@ export const editUser = async (
   city: string | undefined
 ): Promise<boolean> => {  
 
-  if (!email && !city) { // Maybe unecessary?
-    return false;
 
-  } else {
-    try {
-      if (type === "BUYER") {
-        if (email && !city) {
-          await pool.query("UPDATE BUYER SET email = ? WHERE buyer_id = ?", [email, user_id]);
-        } else if (!email && city) {
-          await pool.query("UPDATE BUYER SET city = ? WHERE buyer_id = ?", [city, user_id]);
-        } else {
-          await pool.query("UPDATE BUYER SET email = ?, city = ? WHERE buyer_id = ?", [email, city, user_id]);
-        }
-  
-      } else if (type === "SELLER") {
-        if (email && !city) {
-          await pool.query("UPDATE SELLER SET email = ? WHERE seller_id = ?", [email, user_id]);
-        } else if (!email && city) {
-          await pool.query("UPDATE SELLER SET city = ? WHERE seller_id = ?", [city, user_id]);
-        } else {
-          await pool.query("UPDATE SELLER SET email = ?, city = ? WHERE seller_id = ?", [email, city, user_id]);
-        }
+  try {
+    if (type === "BUYER") {
+      if (email && !city) {
+        await pool.query("UPDATE BUYER SET email = ? WHERE buyer_id = ?", [email, user_id]);
+      } else if (!email && city) {
+        await pool.query("UPDATE BUYER SET city = ? WHERE buyer_id = ?", [city, user_id]);
       } else {
-        await pool.query("UPDATE MODERATOR SET email = ? WHERE  moderator_id = ?", [email]);
+        await pool.query("UPDATE BUYER SET email = ?, city = ? WHERE buyer_id = ?", [email, city, user_id]);
       }
-      return true;
-    } catch (_) {
-      return false;
+
+    } else if (type === "SELLER") {
+      if (email && !city) {
+        await pool.query("UPDATE SELLER SET email = ? WHERE seller_id = ?", [email, user_id]);
+      } else if (!email && city) {
+        await pool.query("UPDATE SELLER SET city = ? WHERE seller_id = ?", [city, user_id]);
+      } else {
+        await pool.query("UPDATE SELLER SET email = ?, city = ? WHERE seller_id = ?", [email, city, user_id]);
+      }
+    } else {
+      await pool.query("UPDATE MODERATOR SET email = ? WHERE  moderator_id = ?", [email, user_id]);
     }
+    return true;
+  } catch (_) {
+    return false;
   }
+
 };
