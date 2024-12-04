@@ -209,7 +209,6 @@
             {/if}
           {/if}
           {#if $tokenStore.variant == UserVariant.BUYER}
-            <button>Send Offer</button>
             <button on:click={handleWishlistAdd}>Add to Wishlist</button>
           {/if}
           {#if $tokenStore.variant == UserVariant.MODERATOR || $tokenStore.variant == UserVariant.BUYER}

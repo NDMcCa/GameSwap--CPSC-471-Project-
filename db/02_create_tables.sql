@@ -125,16 +125,6 @@ CREATE TABLE
         FOREIGN KEY (seller) REFERENCES SELLER (seller_id) ON DELETE CASCADE
     );
 
--- Define RESPONDS_TO table
-CREATE TABLE
-    RESPONDS_TO (
-        moderator_id INT NULL,
-        report_id INT NOT NULL,
-        UNIQUE (moderator_id, report_id),
-        FOREIGN KEY (moderator_id) REFERENCES MODERATOR (moderator_id) ON DELETE SET NULL,
-        FOREIGN KEY (report_id) REFERENCES REPORT_LISTING (report_id) ON DELETE CASCADE
-    );
-
 -- Define TRANSACTION table
 CREATE TABLE
     TRANSACTION (
