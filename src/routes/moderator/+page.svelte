@@ -106,7 +106,7 @@
                             description={reported_listing.description},
                             written_for={reported_listing.written_for},
                             written_by={reported_listing.written_by},
-                            report_id={reported_listing.report_id}
+                            reportId={reported_listing.reportId}
                             written_by_username={reported_listing.written_by_username}
                             seller_username={reported_listing.seller_username}
                             seller_id={reported_listing.seller_id}

@@ -5,10 +5,10 @@ export interface CreateListingReport {
   }
 
 export interface DeleteListingReport {
-    report_id: number;
+    reportId: number;
 }
   
-export type SaveListingReport = CreateListingReport & { report_id: number };
+export type SaveListingReport = CreateListingReport & { reportId: number };
 
 export type ShowListingReport = CreateListingReport & SaveListingReport & { written_by_username: string, seller_username: string, seller_id: number, game_title: string; };
 

@@ -54,12 +54,12 @@
 <main>
     <Nav />
     <div class=reported>
-        <h1>{report.report_id}: {report.game_title}</h1>
+        <h1>{report.reportId}: {report.game_title}</h1>
         <p>Reported By: {report.written_by_username}</p>
         <a href={`../../sellers/${report.seller_id}`}>Seller: {report.seller_username}</a>
         <p>{report.description}</p>
         <button on:click={() => goto(`../../../moderator/`)}>Return</button>
-        <button on:click={() => handleDeleteReport(report.report_id)}>Delete Report</button>
+        <button on:click={() => handleDeleteReport(report.reportId)}>Delete Report</button>
         <button on:click={handleDeleteListing}>Delete Listing</button>
     </div>
 </main>

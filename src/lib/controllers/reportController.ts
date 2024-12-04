@@ -54,7 +54,7 @@ export const getReportByID = async (
     try {
       const [rows] = await pool.query<RowDataPacket[]>(
         `SELECT 
-          RL.report_id,
+          RL.report_id AS reportId,
           RL.description,
           RL.written_by,
           RL.written_for,
@@ -88,7 +88,7 @@ export const getReportByID = async (
     try {
       const [rows] = await pool.query<[]>(
         `SELECT 
-          RL.report_id,
+          RL.report_id AS reportId,
           RL.description,
           RL.written_by,
           RL.written_for,
