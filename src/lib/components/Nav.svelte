@@ -83,6 +83,7 @@
         {/if}
         {#if $tokenStore.variant == UserVariant.MODERATOR}
           <button on:click={() => goto("/moderator")}>Moderator Tools</button>
+          <button on:click={() =>goto("/profile")}>Edit Profile</button>
         {/if}
         {#if $tokenStore.variant == UserVariant.BUYER}
           <button
@@ -91,6 +92,11 @@
           >
         {/if}
         <button on:click={logout}>Logout</button>
+        {#if $tokenStore.variant == UserVariant.SELLER}
+          <button on:click={() =>goto("/profile")}>Edit Profile</button>
+        {:else if $tokenStore.variant == UserVariant.BUYER}
+          <button on:click={() => goto("/profile")}>Edit Profile</button>
+        {/if}
       {:else}
         <button on:click={() => goto("/login")}>Login</button>
         <button on:click={() => goto("/register")}>Register</button>

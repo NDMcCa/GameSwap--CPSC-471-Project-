@@ -211,7 +211,7 @@
           {#if $tokenStore.variant == UserVariant.BUYER}
             <button on:click={handleWishlistAdd}>Add to Wishlist</button>
           {/if}
-          {#if $tokenStore.variant == UserVariant.MODERATOR || $tokenStore.variant == UserVariant.BUYER}
+          {#if $tokenStore.variant == UserVariant.BUYER}
             <button on:click={handleReport}>Report</button>
           {/if}
           {#if isOwner || $tokenStore.variant == UserVariant.MODERATOR}

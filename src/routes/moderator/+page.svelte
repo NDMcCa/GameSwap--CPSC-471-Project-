@@ -3,10 +3,8 @@
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
     import Nav from "$lib/components/Nav.svelte"; 
-    import ReportedListing from "$lib/components/ListingResult.svelte";
     import BanListItem from "$lib/components/BanListItem.svelte";
     import type { BannedSellerModel, SellerModel } from "$lib/models/SellerModel";
-    import ListingResult from "$lib/components/ListingResult.svelte";
     import { setTokenStore } from "../../stores/tokenStore";
     import type { SaveListingReport, ShowListingReport } from "$lib/models/ListingReport";
     import ReportedListingItem from "$lib/components/ReportedListingItem.svelte";
