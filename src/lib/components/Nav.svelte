@@ -2,13 +2,13 @@
   import "../../app.scss";
 
   import { goto } from "$app/navigation";
+  import { browser } from "$app/environment";
   import { setTokenStore, tokenStore } from "../../stores/tokenStore";
   import { UserVariant } from "$lib/models/UserVariant";
   import { page } from "$app/stores";
   import { setOffersStore } from "../../stores/offersStore";
   import { onMount } from "svelte";
   import type { SellerModel } from "$lib/models/SellerModel";
-  import { browser } from "$app/environment";
 
   const logout = async () => {
     await fetch("/api/logout", {
@@ -21,13 +21,13 @@
     goto("/");
   };
 
-  let currentMode: "light" | "dark";
-  let updateTheme: () => void;
+  let toggleTheme: () => void;
 
   if (browser) {
-    currentMode = localStorage.getItem("mode") === "dark" ? "dark" : "light";
+    let currentMode: "light" | "dark" =
+      sessionStorage.getItem("mode") === "dark" ? "dark" : "light";
 
-    updateTheme = () => {
+    toggleTheme = () => {
       if (currentMode === "light") {
         currentMode = "dark";
         window.document.body.classList.add("dark-mode");
@@ -36,7 +36,7 @@
         window.document.body.classList.remove("dark-mode");
       }
 
-      localStorage.setItem("mode", currentMode);
+      sessionStorage.setItem("mode", currentMode);
     };
 
     onMount(() => {
@@ -63,7 +63,7 @@
         <button on:click={() => goto("/login")}>Login</button>
         <button on:click={() => goto("/register")}>Register</button>
       {/if}
-      <button on:click={updateTheme}>Mode</button>
+      <button on:click={toggleTheme}>Mode</button>
     </div>
   {:else}
     <div class="user-container">
@@ -95,7 +95,7 @@
         <button on:click={() => goto("/login")}>Login</button>
         <button on:click={() => goto("/register")}>Register</button>
       {/if}
-      <button on:click={updateTheme}>Mode</button>
+      <button on:click={toggleTheme}>Mode</button>
     </div>
   {/if}
 </div>

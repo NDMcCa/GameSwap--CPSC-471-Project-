@@ -17,10 +17,11 @@
 
 <style lang="scss">
   div.transaction {
-    padding: 0.7rem;
+    padding: 1rem;
     background-color: white;
     color: #333;
     width: 100%;
+    height: min-content;
   }
 
   span.doublearrow {
@@ -30,6 +31,7 @@
 
   h3 {
     margin: 0;
+    margin-bottom: 0.3rem;
   }
 
   :global(body.dark-mode) {

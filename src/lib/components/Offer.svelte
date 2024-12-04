@@ -55,7 +55,6 @@
     padding: 0.7rem;
     background-color: white;
     color: #333;
-    width: 100%;
   }
 
   h3 {

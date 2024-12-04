@@ -3,12 +3,12 @@
   import Nav from "$lib/components/Nav.svelte";
   import { page } from "$app/stores";
   import { setTokenStore, tokenStore } from "../../../stores/tokenStore";
-  import type { SellerModel } from "$lib/models/SellerModel";
   import {
     listingsStore,
     setListingsStore,
   } from "../../../stores/listingsStore";
-  import ListingPerSeller from "$lib/components/ListingPerSeller.svelte";
+  import type { SellerModel } from "$lib/models/SellerModel";
+  import ListingResult from "$lib/components/ListingResult.svelte";
 
   setTokenStore($page.data.token);
   setListingsStore($page.data.sellerListings);
@@ -18,59 +18,82 @@
 
 <main>
   <Nav />
+
   <div class="seller-info-box">
+    <h1>{seller.username}</h1>
     <div class="seller-details">
-      <h1>{seller.username}</h1>
       <h3>{seller.city}</h3>
-      <h3>{seller.email}</h3>
+      <h3><a href={`mailto:${seller.email}`}>{seller.email}</a></h3>
       <h3>Average Rating: {seller.avg_rating}</h3>
     </div>
   </div>
-  <h2>Listings:</h2>
+
+  <h2>Seller Listings</h2>
 
   {#if $listingsStore.length > 0}
-    {#each $listingsStore as listing}
-      <ListingPerSeller model={listing} />
-    {/each}
+    <div class="listings-container">
+      {#each $listingsStore as listing}
+        <ListingResult model={listing} />
+      {/each}
+    </div>
   {:else}
     <h2>No listings found for this seller</h2>
   {/if}
 </main>
 
-<style>
-  h2 {
-    color: teal;
-  }
-
-  .seller-info-box {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 16px;
-    margin: 16px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .seller-details {
+<style lang="scss">
+  div.seller-info-box {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+    background-color: white;
+    border-radius: 5px;
     align-items: center;
-    gap: 16px;
+
+    h1 {
+      margin-bottom: 0;
+      font-size: 2rem;
+    }
+
+    div.seller-details {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      color: white;
+
+      h3 {
+        font-size: 1rem;
+        color: black;
+
+        a {
+          color: rgb(114, 114, 214);
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
   }
 
-  .seller-details h1,
-  .seller-details h3 {
-    margin: 0;
-    font-weight: normal;
+  :global(body.dark-mode) {
+    div.seller-info-box {
+      background-color: #333;
+
+      h3 {
+        color: white;
+      }
+    }
   }
 
-  .seller-details h1 {
-    font-size: 1.5rem;
-    color: #333;
-  }
-
-  .seller-details h3 {
-    font-size: 1rem;
-    color: #555;
+  div.listings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    overflow-x: hidden;
   }
 </style>
