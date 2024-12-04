@@ -93,7 +93,7 @@
         {/if}
         <button on:click={logout}>Logout</button>
         {#if $tokenStore.variant == UserVariant.SELLER}
-          <button on:click={() =>goto("/profile")}>Edit Profile</button>
+          <button on:click={() => goto("/profile")}>Edit Profile</button>
         {:else if $tokenStore.variant == UserVariant.BUYER}
           <button on:click={() => goto("/profile")}>Edit Profile</button>
         {/if}

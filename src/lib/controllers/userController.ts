@@ -4,6 +4,7 @@ import { UserVariant } from "$lib/models/UserVariant";
 import type { BuyerModel } from "$lib/models/BuyerModel";
 import type { ModeratorModel } from "$lib/models/ModeratorModel";
 import type { BannedSellerModel, SellerModel } from "$lib/models/SellerModel";
+import type { RowDataPacket } from "mysql2";
 
 export type UserType = ModeratorModel | BuyerModel | SellerModel;
 
@@ -290,3 +291,30 @@ export const editUser = async (
   }
 
 };
+
+export const insertRating = async (
+  rating: number,
+  description: string,
+  written_by: number,
+  written_for: number
+): Promise<number | undefined> => {
+  try {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      "SELECT 1 FROM SELLER_REVIEW WHERE written_by = ? AND written_for = ?",
+      [written_by, written_for]
+    );
+
+    if (rows.length > 0) {
+        return undefined;
+    }
+
+    const result = await pool.query(
+      "INSERT INTO SELLER_REVIEW (written_by, written_for, rating, comment) VALUES (?, ?, ?, ?)",
+      [written_by, written_for, rating, description]
+    );
+
+    return (result[0] as any).insertId as number;
+  } catch (_) {
+    return undefined;
+  }
+}

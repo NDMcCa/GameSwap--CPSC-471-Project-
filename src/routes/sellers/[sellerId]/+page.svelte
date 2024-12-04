@@ -9,6 +9,7 @@
   } from "../../../stores/listingsStore";
   import type { SellerModel } from "$lib/models/SellerModel";
   import ListingResult from "$lib/components/ListingResult.svelte";
+  import { goto } from "$app/navigation";
 
   setTokenStore($page.data.token);
   setListingsStore($page.data.sellerListings);
@@ -25,6 +26,9 @@
       <h3>{seller.city}</h3>
       <h3><a href={`mailto:${seller.email}`}>{seller.email}</a></h3>
       <h3>Average Rating: {seller.avg_rating}</h3>
+      {#if $tokenStore && $tokenStore.variant === "BUYER"}
+        <button on:click={() => goto(`../../rating/${seller.seller_id}`)}>Rate</button>
+      {/if}
     </div>
   </div>
 
@@ -50,6 +54,10 @@
     border-radius: 5px;
     align-items: center;
 
+
+
+
+
     h1 {
       margin-bottom: 0;
       font-size: 2rem;
@@ -62,6 +70,17 @@
       gap: 1rem;
       padding: 1rem;
       color: white;
+      align-items: center;
+
+      button {
+        background-color: #f4f4f4;
+        padding-bottom: 0.5rem;
+        padding-top: 0.5rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        margin-bottom: 0;
+        height: min-content;
+      }
 
       h3 {
         font-size: 1rem;
@@ -82,7 +101,9 @@
   :global(body.dark-mode) {
     div.seller-info-box {
       background-color: #333;
-
+      button {
+        background-color: #272727;
+      }
       h3 {
         color: white;
       }
@@ -96,4 +117,6 @@
     width: 100%;
     overflow-x: hidden;
   }
+
+  
 </style>

@@ -24,7 +24,7 @@ import type { BuyerModel } from "$lib/models/BuyerModel";
     const body = (await request.json()) as ShowListingReport;
   
     if (token.variant === UserVariant.MODERATOR) {
-      const result = await deleteReport(body.report_id);
+      const result = await deleteReport(body.reportId);
   
       if (result) {
         return new Response(JSON.stringify({ message: "Success" }), {
