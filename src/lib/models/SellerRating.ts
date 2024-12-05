@@ -5,7 +5,7 @@ export interface CreateSellerRating {
     written_for: number;
   };
 
-  export type SaveSellerRating = CreateSellerRating & { reportId: number };
+  export type SaveSellerRating = CreateSellerRating & { review_number: number, username: string};
 
   export interface CreateRatingResponse {
     insertedId: number;

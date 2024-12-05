@@ -5,6 +5,7 @@ import type { BuyerModel } from "$lib/models/BuyerModel";
 import type { ModeratorModel } from "$lib/models/ModeratorModel";
 import type { BannedSellerModel, SellerModel } from "$lib/models/SellerModel";
 import type { RowDataPacket } from "mysql2";
+import type { SaveSellerRating } from "$lib/models/SellerRating";
 
 export type UserType = ModeratorModel | BuyerModel | SellerModel;
 
@@ -337,3 +338,18 @@ export const updateAverageRating = async (
     return false;
   }
 };
+
+export const getAllRatingsForSeller = async (
+  seller_id: number
+): Promise<SaveSellerRating[] | undefined> => {
+  try {
+    const result = await pool.query(
+      `SELECT sr.written_by, sr.written_for, sr.review_number, sr.rating, b.username FROM SELLER_REVIEW sr JOIN BUYER b ON sr.written_by = b.user_id WHERE written_for = ?`,
+      [seller_id]
+    );
+
+    return result[0] as SaveSellerRating[];
+  } catch (_) {
+    return undefined;
+  }
+}

@@ -27,6 +27,7 @@
       <h3><a href={`mailto:${seller.email}`}>{seller.email}</a></h3>
       {#if seller.avg_rating}
         <h3>Average Rating: {seller.avg_rating}</h3>
+        <button on:click={() => goto(`../../reviews/${seller.seller_id}`)}>See All</button>
       {:else}
         <h3>No ratings yet</h3>
       {/if}
