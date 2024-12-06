@@ -53,7 +53,7 @@ CREATE TABLE
             rating >= 1
             AND rating <= 5
         ),
-        comment TEXT NOT NULL,
+        description TEXT NOT NULL,
         FOREIGN KEY (written_by) REFERENCES BUYER (buyer_id) ON DELETE CASCADE,
         FOREIGN KEY (written_for) REFERENCES SELLER (seller_id) ON DELETE CASCADE
     );

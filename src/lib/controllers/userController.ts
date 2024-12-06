@@ -310,7 +310,7 @@ export const insertRating = async (
     }
 
     const result = await pool.query(
-      "INSERT INTO SELLER_REVIEW (written_by, written_for, rating, comment) VALUES (?, ?, ?, ?)",
+      "INSERT INTO SELLER_REVIEW (written_by, written_for, rating, description) VALUES (?, ?, ?, ?)",
       [written_by, written_for, rating, description]
     );
 
@@ -344,7 +344,7 @@ export const getAllRatingsForSeller = async (
 ): Promise<SaveSellerRating[] | undefined> => {
   try {
     const result = await pool.query(
-      `SELECT sr.written_by, sr.written_for, sr.review_number, sr.rating, b.username FROM SELLER_REVIEW sr JOIN BUYER b ON sr.written_by = b.user_id WHERE written_for = ?`,
+      `SELECT sr.written_by, sr.written_for, sr.review_number, sr.rating, sr.description, b.username FROM SELLER_REVIEW sr JOIN BUYER b ON sr.written_by = b.buyer_id WHERE written_for = ?`,
       [seller_id]
     );
 

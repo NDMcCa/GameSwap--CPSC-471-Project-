@@ -17,7 +17,7 @@
     }
   </script>
 
-  <div class="re">
+  <div class="review">
     <h2>
       <p>{model.username}</p>
       <span>{model.rating}</span>
