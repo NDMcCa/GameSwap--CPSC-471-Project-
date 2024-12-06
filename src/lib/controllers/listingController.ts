@@ -2,7 +2,6 @@ import pool from "$lib/db";
 import type { GameCategoryModel } from "$lib/models/GameCategoryModel";
 import type { JoinedGameListingModel } from "$lib/models/GameListingModel";
 import type { GamePlatformModel } from "$lib/models/GamePlatformModel";
-import type { GameListingModel } from "$lib/models/GameListingModel";
 
 export const getGameListings = async (
   category: string | undefined,
@@ -11,14 +10,24 @@ export const getGameListings = async (
   seller: string | undefined
 ): Promise<JoinedGameListingModel[] | undefined> => {
   try {
-    let query =
-      "SELECT GAME_LISTING.*, SELLER.*, GAME_CATEGORY.description AS category_description, GAME_PLATFORM.description AS platform_description FROM GAME_LISTING JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name";
+    let query = `SELECT
+        GAME_LISTING.*,
+        SELLER.*, GAME_CATEGORY.description AS category_description,
+        GAME_PLATFORM.description AS platform_description
+      FROM GAME_LISTING
+      JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
+      JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name
+      JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name`;
+
+    query += " WHERE";
+
+    let additionalConditions: string[] = [];
+
+    additionalConditions.push(
+      " GAME_LISTING.posted_by NOT IN (SELECT target_seller FROM BAN_LIST)"
+    );
 
     if (category || platform || title || seller) {
-      query += " WHERE";
-
-      let additionalConditions: string[] = [];
-
       if (category) {
         additionalConditions.push(
           ` GAME_CATEGORY.category_name = '${category}'`
@@ -38,10 +47,10 @@ export const getGameListings = async (
       if (seller) {
         additionalConditions.push(` SELLER.username LIKE '%${seller}%'`);
       }
+    }
 
-      if (additionalConditions.length > 0) {
-        query += additionalConditions.join(" AND ");
-      }
+    if (additionalConditions.length > 0) {
+      query += additionalConditions.join(" AND ");
     }
 
     query += " ORDER BY listing_id DESC";
@@ -49,6 +58,7 @@ export const getGameListings = async (
     const result = await pool.query(query);
     return result[0] as JoinedGameListingModel[];
   } catch (_) {
+    console.log(_);
     return undefined;
   }
 };
@@ -58,7 +68,18 @@ export const getGameListingById = async (
 ): Promise<JoinedGameListingModel | undefined> => {
   try {
     const result = await pool.query(
-      "SELECT GAME_LISTING.*, SELLER.*, GAME_CATEGORY.description AS category_description, GAME_PLATFORM.description AS platform_description FROM GAME_LISTING JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name WHERE listing_id = ?",
+      `SELECT
+        GAME_LISTING.*,
+        SELLER.*,
+        GAME_CATEGORY.description AS category_description,
+        GAME_PLATFORM.description AS platform_description
+      FROM GAME_LISTING
+      JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
+      JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name
+      JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
+      WHERE
+        listing_id = ? AND
+        GAME_LISTING.posted_by NOT IN (SELECT target_seller FROM BAN_LIST)`,
       [listingId]
     );
 
@@ -73,9 +94,16 @@ export const getGameListingsBySellerId = async (
 ): Promise<JoinedGameListingModel[] | undefined> => {
   try {
     const result = await pool.query(
-      `SELECT GAME_LISTING.*, SELLER.*, GAME_CATEGORY.description AS category_description, GAME_PLATFORM.description AS platform_description
-                                     FROM GAME_LISTING JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
-                                      WHERE SELLER.seller_id = ?`,
+      `SELECT
+          GAME_LISTING.*,
+          SELLER.*,
+          GAME_CATEGORY.description AS category_description,
+          GAME_PLATFORM.description AS platform_description
+      FROM GAME_LISTING
+      JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
+      JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name
+      JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
+      WHERE SELLER.seller_id = ?`,
       [sellerId]
     );
 
