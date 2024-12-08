@@ -37,13 +37,12 @@ const authenticateUser = async (
       const banCheck = await pool.query(
         "SELECT * FROM BAN_LIST WHERE target_seller = ?",
         [seller.seller_id]
-      ); 
+      );
 
       const bans = banCheck[0] as any[];
       if (bans.length > 0) {
         return undefined; // Seller is banned
       }
-  
     }
 
     return users[0];
@@ -147,8 +146,9 @@ export const insertSeller = async (
   >;
 };
 
-export const getBannedUsers = async (
-): Promise<BannedSellerModel[] | undefined> => {
+export const getBannedUsers = async (): Promise<
+  BannedSellerModel[] | undefined
+> => {
   try {
     const result = await pool.query(
       `SELECT 
@@ -174,7 +174,10 @@ export const banUser = async (
   target_seller: number
 ): Promise<boolean> => {
   try {
-    await pool.query("INSERT INTO BAN_LIST (banned_by, target_seller) VALUES (?, ?)", [banned_by, target_seller]);
+    await pool.query(
+      "INSERT INTO BAN_LIST (banned_by, target_seller) VALUES (?, ?)",
+      [banned_by, target_seller]
+    );
 
     return true;
   } catch (err) {
@@ -183,11 +186,11 @@ export const banUser = async (
   }
 };
 
-export const unbanUser = async (
-  target_seller: number
-): Promise<boolean> => {
+export const unbanUser = async (target_seller: number): Promise<boolean> => {
   try {
-    await pool.query("DELETE FROM BAN_LIST WHERE target_seller = ?", [target_seller]);
+    await pool.query("DELETE FROM BAN_LIST WHERE target_seller = ?", [
+      target_seller,
+    ]);
 
     return true;
   } catch (err) {
@@ -196,9 +199,7 @@ export const unbanUser = async (
   }
 };
 
-export const getSellers = async (): Promise<
-  SellerModel[] | undefined
-> => {
+export const getSellers = async (): Promise<SellerModel[] | undefined> => {
   try {
     const result = await pool.query(`SELECT s.* FROM SELLER AS s
                                      LEFT JOIN BAN_LIST AS b ON s.seller_id = b.target_seller
@@ -262,35 +263,52 @@ export const editUser = async (
   type: "BUYER" | "SELLER" | "MODERATOR",
   email: string | undefined,
   city: string | undefined
-): Promise<boolean> => {  
-
-
+): Promise<boolean> => {
   try {
     if (type === "BUYER") {
       if (email && !city) {
-        await pool.query("UPDATE BUYER SET email = ? WHERE buyer_id = ?", [email, user_id]);
+        await pool.query("UPDATE BUYER SET email = ? WHERE buyer_id = ?", [
+          email,
+          user_id,
+        ]);
       } else if (!email && city) {
-        await pool.query("UPDATE BUYER SET city = ? WHERE buyer_id = ?", [city, user_id]);
+        await pool.query("UPDATE BUYER SET city = ? WHERE buyer_id = ?", [
+          city,
+          user_id,
+        ]);
       } else {
-        await pool.query("UPDATE BUYER SET email = ?, city = ? WHERE buyer_id = ?", [email, city, user_id]);
+        await pool.query(
+          "UPDATE BUYER SET email = ?, city = ? WHERE buyer_id = ?",
+          [email, city, user_id]
+        );
       }
-
     } else if (type === "SELLER") {
       if (email && !city) {
-        await pool.query("UPDATE SELLER SET email = ? WHERE seller_id = ?", [email, user_id]);
+        await pool.query("UPDATE SELLER SET email = ? WHERE seller_id = ?", [
+          email,
+          user_id,
+        ]);
       } else if (!email && city) {
-        await pool.query("UPDATE SELLER SET city = ? WHERE seller_id = ?", [city, user_id]);
+        await pool.query("UPDATE SELLER SET city = ? WHERE seller_id = ?", [
+          city,
+          user_id,
+        ]);
       } else {
-        await pool.query("UPDATE SELLER SET email = ?, city = ? WHERE seller_id = ?", [email, city, user_id]);
+        await pool.query(
+          "UPDATE SELLER SET email = ?, city = ? WHERE seller_id = ?",
+          [email, city, user_id]
+        );
       }
     } else {
-      await pool.query("UPDATE MODERATOR SET email = ? WHERE  moderator_id = ?", [email, user_id]);
+      await pool.query(
+        "UPDATE MODERATOR SET email = ? WHERE  moderator_id = ?",
+        [email, user_id]
+      );
     }
     return true;
   } catch (_) {
     return false;
   }
-
 };
 
 export const insertRating = async (
@@ -306,7 +324,7 @@ export const insertRating = async (
     );
 
     if (rows.length > 0) {
-        return undefined;
+      return undefined;
     }
 
     const result = await pool.query(
@@ -318,7 +336,7 @@ export const insertRating = async (
   } catch (_) {
     return undefined;
   }
-}
+};
 
 export const updateAverageRating = async (
   seller_id: number
@@ -331,7 +349,10 @@ export const updateAverageRating = async (
 
     const avgRating = (rows[0] as any).avg_rating as number;
 
-    await pool.query("UPDATE SELLER SET avg_rating = ? WHERE seller_id = ?", [avgRating, seller_id]);
+    await pool.query("UPDATE SELLER SET avg_rating = ? WHERE seller_id = ?", [
+      avgRating,
+      seller_id,
+    ]);
 
     return true;
   } catch (_) {
@@ -352,4 +373,4 @@ export const getAllRatingsForSeller = async (
   } catch (_) {
     return undefined;
   }
-}
+};

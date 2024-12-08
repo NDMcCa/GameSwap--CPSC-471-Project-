@@ -1,4 +1,4 @@
--- Create database
+-- Create and use the gameswap_db database
 CREATE DATABASE IF NOT EXISTS gameswap_db;
 
 USE gameswap_db;
@@ -58,7 +58,7 @@ CREATE TABLE
             rating >= 1
             AND rating <= 5
         ),
-        comment TEXT NOT NULL,
+        description TEXT NOT NULL,
         FOREIGN KEY (written_by) REFERENCES BUYER (buyer_id) ON DELETE CASCADE,
         FOREIGN KEY (written_for) REFERENCES SELLER (seller_id) ON DELETE CASCADE
     );
@@ -130,16 +130,6 @@ CREATE TABLE
         FOREIGN KEY (seller) REFERENCES SELLER (seller_id) ON DELETE CASCADE
     );
 
--- Define RESPONDS_TO table
-CREATE TABLE
-    RESPONDS_TO (
-        moderator_id INT NULL,
-        report_id INT NOT NULL,
-        UNIQUE (moderator_id, report_id),
-        FOREIGN KEY (moderator_id) REFERENCES MODERATOR (moderator_id) ON DELETE SET NULL,
-        FOREIGN KEY (report_id) REFERENCES REPORT_LISTING (report_id) ON DELETE CASCADE
-    );
-
 -- Define TRANSACTION table
 CREATE TABLE
     TRANSACTION (
@@ -147,7 +137,7 @@ CREATE TABLE
         recorded_buyer INT NULL,
         for_listing INT NULL,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE (recorded_seller, recorded_buyer, for_listing),
+        UNIQUE (recorded_seller, for_listing),
         FOREIGN KEY (recorded_seller) REFERENCES SELLER (seller_id) ON DELETE SET NULL,
         FOREIGN KEY (recorded_buyer) REFERENCES BUYER (buyer_id) ON DELETE SET NULL,
         FOREIGN KEY (for_listing) REFERENCES GAME_LISTING (listing_id) ON DELETE SET NULL
@@ -227,183 +217,134 @@ VALUES
         'Games that simulate real-world sports.'
     );
 
--- Reading game listings
+-- Queries used in backend controllers
+
+-- Listings queries
 SELECT
-    *
-FROM
-    GAME_LISTING
-    JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
-    JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
-    JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name;
+    GAME_LISTING.*,
+    SELLER.*,
+    GAME_CATEGORY.description AS category_description,
+    GAME_PLATFORM.description AS platform_description
+FROM GAME_LISTING
+JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
+JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name
+JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
+WHERE GAME_LISTING.posted_by NOT IN (SELECT target_seller FROM BAN_LIST)
 
--- Other variants for filtering game listing results
-SELECT
-    *
-FROM
-    GAME_LISTING
-    JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
-    JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
-    JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name
-WHERE
-    GAME_LISTING.categoy_name LIKE 'Action';
+UPDATE GAME_LISTING
+SET title = ?, description = ?, price = ?, platform = ?, category = ?
+WHERE posted_by = ? AND listing_id = ?
 
-SELECT
-    *
-FROM
-    GAME_LISTING
-    JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
-    JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
-    JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name
-WHERE
-    GAME_LISTING.platform LIKE 'PlayStation 4';
+DELETE FROM GAME_LISTING
+WHERE listing_id = ?
 
-SELECT
-    *
-FROM
-    GAME_LISTING
-    JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
-    JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
-    JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name
-WHERE
-    GAME_LISTING.game_title LIKE 'The Legend of Zelda%';
+-- User queries
+SELECT * FROM ?? WHERE username = ? OR email = ?
 
-SELECT
-    *
-FROM
-    GAME_LISTING
-    JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
-    JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
-    JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name
-WHERE
-    SELLER.username LIKE 'Anderdingus';
+UPDATE BUYER
+SET email = ?, city = ?
+WHERE buyer_id = ?
 
--- Read game categories
-SELECT
-    *
-FROM
-    GAME_CATEGORY;
+UPDATE SELLER
+SET email = ?, city = ?
+WHERE seller_id = ?
 
--- Read game platforms
-SELECT
-    *
-FROM
-    GAME_PLATFORM;
+UPDATE MODERATOR
+SET email = ?
+WHERE moderator_id = ?
 
--- Find user for login
-SELECT
-    *
-FROM
-    BUYER
-WHERE
-    username = 'Anderdingus'
-    OR email = 'anderdingus@hotmail.com';
+INSERT INTO SELLER_REVIEW (written_by, written_for, rating, description)
+VALUES (?, ?, ?, ?)
 
-SELECT
-    *
-FROM
-    SELLER
-WHERE
-    username = 'Anderdingus'
-    OR email = 'anderdingus@hotmail.com';
+SELECT AVG(rating) AS avg_rating
+FROM SELLER_REVIEW
+WHERE written_for = ?
 
-SELECT
-    *
-FROM
-    MODERATOR
-WHERE
-    username = 'Anderdingus'
-    OR email = 'anderdingus@hotmail.com';
+UPDATE SELLER
+SET avg_rating = ?
+WHERE seller_id = ?
 
--- Registering a new user
-INSERT INTO
-    BUYER (password_hash, email, city, username)
-VALUES
-    (
-        'somehash1',
-        'ryanbuttlord@gmail.com',
-        'New York',
-        'RyanButtlord'
-    );
+SELECT sr.written_by, sr.written_for, sr.review_number, sr.rating, sr.description, b.username
+FROM SELLER_REVIEW sr
+JOIN BUYER b ON sr.written_by = b.buyer_id
+WHERE written_for = ?
 
-INSERT INTO
-    SELLER (password_hash, email, city, username)
-VALUES
-    (
-        'somehash2',
-        'coconutball@hotmail.com',
-        'Los Angeles',
-        'CoconutBall'
-    );
+SELECT b.* FROM BUYER b WHERE b.buyer_id = ?
 
--- Reports joined with listings and the buyer who wrote the report
-SELECT
-    *
-FROM
-    REPORT_LISTING
-    JOIN GAME_LISTING ON REPORT_LISTING.written_for = GAME_LISTING.listing_id
-    JOIN BUYER ON REPORT_LISTING.written_by = BUYER.buyer_id;
+SELECT s.* FROM SELLER s WHERE s.seller_id = ?
 
--- Transactions a buyer has made joined with the seller and listing
-SELECT
-    *
-FROM
-    TRANSACTION
-    JOIN SELLER ON TRANSACTION.recorded_seller = SELLER.seller_id
-    JOIN BUYER ON TRANSACTION.recorded_buyer = BUYER.buyer_id
-    JOIN GAME_LISTING ON TRANSACTION.for_listing = GAME_LISTING.listing_id;
+SELECT m.* FROM MODERATOR m WHERE m.moderator_id = ?
 
--- Transactions a seller has made joined with the buyer and listing
-SELECT
-    *
-FROM
-    TRANSACTION
-    JOIN SELLER ON TRANSACTION.recorded_seller = SELLER.seller_id
-    JOIN BUYER ON TRANSACTION.recorded_buyer = BUYER.buyer_id
-    JOIN GAME_LISTING ON TRANSACTION.for_listing = GAME_LISTING.listing_id;
+SELECT b.*, s.username AS banned_username
+FROM BAN_LIST b
+JOIN SELLER s ON b.target_seller = s.seller_id;
 
--- Reviews a seller has received joined with the buyer who wrote the review
-SELECT
-    *
-FROM
-    SELLER_REVIEW
-    JOIN BUYER ON SELLER_REVIEW.written_by = BUYER.buyer_id;
+SELECT * FROM SELLER;
 
--- Reviews a buyer has written joined with the seller who received the review
-SELECT
-    *
-FROM
-    SELLER_REVIEW
-    JOIN SELLER ON SELLER_REVIEW.written_for = SELLER.seller_id;
+SELECT 1 FROM SELLER_REVIEW WHERE written_by = ? AND written_for = ?
 
--- Wishlist listings a buyer has created joined with the listing
-SELECT
-    *
-FROM
-    WISHLIST_LISTING
-    JOIN GAME_LISTING ON WISHLIST_LISTING.created_for = GAME_LISTING.listing_id;
+INSERT INTO SELLER_REVIEW (written_by, written_for, rating, description)
+VALUES (?, ?, ?, ?)
 
--- Offers a buyer has sent joined with the seller and the listing
-SELECT
-    *
-FROM
-    SENDS_OFFER_TO
-    JOIN SELLER ON SENDS_OFFER_TO.seller = SELLER.seller_id
-    JOIN BUYER ON SENDS_OFFER_TO.buyer = BUYER.buyer_id;
+-- Offer queries
+SELECT * FROM SENDS_OFFER_TO JOIN BUYER ON SENDS_OFFER_TO.buyer = BUYER.buyer_id WHERE seller = ?
 
--- Offers a seller has received joined with the buyer and the listing
-SELECT
-    *
-FROM
-    SENDS_OFFER_TO
-    JOIN SELLER ON SENDS_OFFER_TO.seller = SELLER.seller_id
-    JOIN BUYER ON SENDS_OFFER_TO.buyer = BUYER.buyer_id;
+INSERT INTO SENDS_OFFER_TO (buyer, seller, offer_comment) VALUES (?, ?, ?)
 
--- Bans joined with the moderator who banned the seller and the seller
-SELECT
-    *
-FROM
-    BAN_LIST
-    JOIN MODERATOR ON BAN_LIST.banned_by = MODERATOR.moderator_id
-    JOIN SELLER ON BAN_LIST.target_seller = SELLER.seller_id;
+DELETE FROM SENDS_OFFER_TO WHERE buyer = ? AND seller = ?
 
--- Probably other queries will be used in the future or the above queries will be modified
+-- Report queries
+SELECT 1 FROM REPORT_LISTING WHERE written_by = ? AND written_for = ?
+
+INSERT INTO REPORT_LISTING (description, written_by, written_for) VALUES (?, ?, ?)
+
+DELETE FROM REPORT_LISTING WHERE report_id = ?
+
+SELECT 
+    RL.report_id AS reportId,
+    RL.description,
+    RL.written_by,
+    RL.written_for,
+    B.username AS written_by_username,
+    S.username AS seller_username,
+    S.seller_id,
+    GL.title AS game_title
+    FROM 
+        REPORT_LISTING RL
+    LEFT JOIN 
+        BUYER B ON RL.written_by = B.buyer_id
+    INNER JOIN 
+        GAME_LISTING GL ON RL.written_for = GL.listing_id
+    INNER JOIN 
+        SELLER S ON GL.posted_by = S.seller_id
+    WHERE RL.report_id = ?
+
+SELECT 
+    RL.report_id AS reportId,
+    RL.description,
+    RL.written_by,
+    RL.written_for,
+    B.username AS written_by_username,
+    S.username AS seller_username,
+    S.seller_id,
+    GL.title AS game_title
+    FROM 
+        REPORT_LISTING RL
+    LEFT JOIN 
+        BUYER B ON RL.written_by = B.buyer_id
+    INNER JOIN 
+        GAME_LISTING GL ON RL.written_for = GL.listing_id
+    INNER JOIN 
+        SELLER S ON GL.posted_by = S.seller_id
+
+-- Transaction queries
+SELECT * FROM TRANSACTION JOIN SELLER ON TRANSACTION.recorded_seller = SELLER.seller_id JOIN GAME_LISTING ON TRANSACTION.for_listing = GAME_LISTING.listing_id WHERE recorded_buyer = ?
+
+INSERT INTO TRANSACTION (recorded_seller, recorded_buyer, for_listing) VALUES (?, ?, ?)
+
+-- Wishlist queries
+SELECT 1 FROM WISHLIST_LISTING WHERE created_by = ? AND created_for = ?
+
+INSERT INTO WISHLIST_LISTING (created_by, created_for) VALUES (?, ?)
+
+DELETE FROM WISHLIST_LISTING WHERE created_by = ? AND created_for = ?
