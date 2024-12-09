@@ -230,6 +230,13 @@ JOIN SELLER ON GAME_LISTING.posted_by = SELLER.seller_id
 JOIN GAME_CATEGORY ON GAME_LISTING.category = GAME_CATEGORY.category_name
 JOIN GAME_PLATFORM ON GAME_LISTING.platform = GAME_PLATFORM.platform_name
 WHERE GAME_LISTING.posted_by NOT IN (SELECT target_seller FROM BAN_LIST)
+ 
+-- Additional conditions:
+-- GAME_CATEGORY.category_name = ?
+-- GAME_PLATFORM.platform_name = ?
+-- GAME_LISTING.title LIKE %?%
+-- SELLER.username LIKE %?%
+-- ORDER BY listing_id DESC
 
 UPDATE GAME_LISTING
 SET title = ?, description = ?, price = ?, platform = ?, category = ?
@@ -240,6 +247,19 @@ WHERE listing_id = ?
 
 -- User queries
 SELECT * FROM ?? WHERE username = ? OR email = ?
+
+SELECT * FROM BAN_LIST WHERE target_seller = ?
+
+INSERT INTO ?? (username, email, password_hash, city) VALUES (?, ?, ?, ?)
+
+SELECT  SELLER.username AS banned_user, SELLER.seller_id AS seller_id, MODERATOR.username AS banning_moderator
+FROM BAN_LIST 
+JOIN SELLER ON BAN_LIST.target_seller = SELLER.seller_id
+JOIN MODERATOR ON BAN_LIST.banned_by = MODERATOR.moderator_id;
+
+INSERT INTO BAN_LIST (banned_by, target_seller) VALUES (?, ?);
+
+DELETE FROM BAN_LIST WHERE target_seller = ?;
 
 UPDATE BUYER
 SET email = ?, city = ?
@@ -271,7 +291,15 @@ WHERE written_for = ?
 
 SELECT b.* FROM BUYER b WHERE b.buyer_id = ?
 
-SELECT s.* FROM SELLER s WHERE s.seller_id = ?
+SELECT s.* 
+FROM SELLER s
+LEFT JOIN BAN_LIST b ON s.seller_id = b.target_seller
+WHERE b.target_seller IS NULL;
+
+SELECT s.* 
+FROM SELLER s
+LEFT JOIN BAN_LIST b ON s.seller_id = b.target_seller
+WHERE b.target_seller IS NULL AND s.seller_id = ?;
 
 SELECT m.* FROM MODERATOR m WHERE m.moderator_id = ?
 
