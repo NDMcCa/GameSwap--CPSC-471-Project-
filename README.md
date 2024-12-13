@@ -1,6 +1,8 @@
 # Game Swap
 
 > Project for **CPSC 471**!
+> Not affiliated in any way with GameStop. This project is not for realworld application and as such is not intended to benefit from similarity to the GameStop brand in any way.
+> Also not affiliated with the real GameSwap or intended to benefit in any way off of that branding as well. We're just fans of gaming!
 
 ![SvelteKit](https://img.shields.io/badge/sveltekit-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)
 ![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
